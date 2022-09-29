@@ -30,9 +30,11 @@ namespace Assignment2Prj
             _bricksCols = 8;
             _paddleSpeed = 5;
 
-
             _ball = new Ball(_verticalSpeed, _horizontalSpeed);
-            _paddle = new Paddle(_paddleSpeed) { Position = new PointF(Width / 2, Height - 80) };
+            _paddle = new Paddle(_paddleSpeed) {
+                Position = new PointF(Width / 2, Height - 80),
+                Size = new Size(100, 20)
+            };
             _bricks = new Bricks(_bricksRows, _bricksCols);
 
             _manager = new GameManager(_bricks, _ball, _paddle);
@@ -50,7 +52,7 @@ namespace Assignment2Prj
 
             g.Clear(Color.Black);
 
-            g.FillRectangle(Brushes.White, new RectangleF(_paddle.Position.X - 50, _paddle.Position.Y - 10, 100, 20));
+            _paddle.Render(g);
         }
 
         private void Game_Load(object sender, EventArgs e)
