@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Assignment2Prj
 {
     class Paddle
     {
-        private PictureBox _picPaddle;
         private int _paddleSpeed;
 
-        public Paddle(PictureBox picPaddle, int paddleSpeed)
+        public PointF Position { get; set; }
+
+        public Paddle(int paddleSpeed)
         {
-            _picPaddle = picPaddle;
             _paddleSpeed = paddleSpeed;
         }
     }
