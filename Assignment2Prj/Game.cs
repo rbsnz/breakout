@@ -20,7 +20,7 @@ namespace Assignment2Prj
         private Bricks bricks;
         private Ball ball;
         private Paddle paddle;
-        private Mannger mannger;
+        private GameManager mannger;
 
         private int verticalSpeed;
         private int horizontalSpeed;
@@ -47,7 +47,7 @@ namespace Assignment2Prj
             this.paddle = new Paddle(picPaddle, paddleSpeed);
             this.bricks = new Bricks(bricksRows, bricksCols);
 
-            this.mannger = new Mannger(bricks, ball, paddle);
+            this.mannger = new GameManager(bricks, ball, paddle);
 
         }
 

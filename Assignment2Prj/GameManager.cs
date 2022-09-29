@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assignment2Prj
 {
-    class Mannger
+    class GameManager
     {
         /// <summary>
         /// Your Manager class must have following attributes 
@@ -16,7 +16,7 @@ namespace Assignment2Prj
         private Ball ball;
         private Paddle paddle;
 
-        public Mannger(Bricks bricks, Ball ball, Paddle paddle)
+        public GameManager(Bricks bricks, Ball ball, Paddle paddle)
         {
             this.bricks = bricks;
             this.ball = ball;
