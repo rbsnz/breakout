@@ -13,14 +13,14 @@ namespace Assignment2Prj
         /// Your Ball class must have following attributes 
         /// Add more attributes if required 
         /// </summary>
-        private PictureBox picBall;
-        private int verticalSpeed, horizontalSpeed;
+        private PictureBox _picBall;
+        private int _verticalSpeed, _horizontalSpeed;
 
         public Ball(PictureBox picBall, int verticalSpeed, int horizontalSpeed)
         {
-            this.picBall = picBall;
-            this.verticalSpeed = verticalSpeed;
-            this.horizontalSpeed = horizontalSpeed;
+            _picBall = picBall;
+            _verticalSpeed = verticalSpeed;
+            _horizontalSpeed = horizontalSpeed;
         }
         //Add methods
 

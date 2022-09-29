@@ -13,15 +13,15 @@ namespace Assignment2Prj
         /// Your Brick class must have following attributes 
         /// Add more attributes if required 
         /// </summary>
-        private PictureBox[,] bricks;
-        private int rows;
-        private int cols;
+        private PictureBox[,] _bricks;
+        private int _rows;
+        private int _cols;
 
         public Bricks(int rows, int cols)
         {
-            this.rows = rows;
-            this.cols = cols;
-            this.bricks = new PictureBox[rows, cols];
+            _rows = rows;
+            _cols = cols;
+            _bricks = new PictureBox[rows, cols];
         }
         //Add methods 
     }

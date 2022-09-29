@@ -13,13 +13,13 @@ namespace Assignment2Prj
         /// Your Paddle class must have following attributes 
         /// Add more attributes if required 
         /// </summary>
-        private PictureBox picPaddle;
-        private int paddleSpeed;
+        private PictureBox _picPaddle;
+        private int _paddleSpeed;
 
         public Paddle(PictureBox picPaddle, int paddleSpeed)
         {
-            this.picPaddle = picPaddle;
-            this.paddleSpeed = paddleSpeed;
+            _picPaddle = picPaddle;
+            _paddleSpeed = paddleSpeed;
         }
     }
 }

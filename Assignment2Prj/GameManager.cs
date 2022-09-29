@@ -12,17 +12,15 @@ namespace Assignment2Prj
         /// Your Manager class must have following attributes 
         /// Add more attributes if required 
         /// </summary>
-        private Bricks bricks;
-        private Ball ball;
-        private Paddle paddle;
+        private Bricks _bricks;
+        private Ball _ball;
+        private Paddle _paddle;
 
         public GameManager(Bricks bricks, Ball ball, Paddle paddle)
         {
-            this.bricks = bricks;
-            this.ball = ball;
-            this.paddle = paddle;
-
-
+            _bricks = bricks;
+            _ball = ball;
+            _paddle = paddle;
         }
     }
 }

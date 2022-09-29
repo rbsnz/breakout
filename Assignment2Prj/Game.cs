@@ -17,16 +17,16 @@ namespace Assignment2Prj
         /// </summary>
         /// 
 
-        private Bricks bricks;
-        private Ball ball;
-        private Paddle paddle;
-        private GameManager mannger;
+        private Bricks _bricks;
+        private Ball _ball;
+        private Paddle _paddle;
+        private GameManager _manager;
 
-        private int verticalSpeed;
-        private int horizontalSpeed;
-        private int bricksRows;
-        private int bricksCols;
-        private int paddleSpeed;
+        private int _verticalSpeed;
+        private int _horizontalSpeed;
+        private int _bricksRows;
+        private int _bricksCols;
+        private int _paddleSpeed;
 
 
 
@@ -36,18 +36,18 @@ namespace Assignment2Prj
         {
             InitializeComponent();
             //Adjust these numbers 
-            this.verticalSpeed = 5;
-            this.horizontalSpeed = 5;
-            this.bricksRows = 5;
-            this.bricksCols = 8;
-            this.paddleSpeed = 5;
+            _verticalSpeed = 5;
+            _horizontalSpeed = 5;
+            _bricksRows = 5;
+            _bricksCols = 8;
+            _paddleSpeed = 5;
 
             //Create objects 
-            this.ball = new Ball(picBall, verticalSpeed, horizontalSpeed);
-            this.paddle = new Paddle(picPaddle, paddleSpeed);
-            this.bricks = new Bricks(bricksRows, bricksCols);
+            _ball = new Ball(picBall, _verticalSpeed, _horizontalSpeed);
+            _paddle = new Paddle(picPaddle, _paddleSpeed);
+            _bricks = new Bricks(_bricksRows, _bricksCols);
 
-            this.mannger = new GameManager(bricks, ball, paddle);
+            _manager = new GameManager(_bricks, _ball, _paddle);
 
         }
 
