@@ -31,8 +31,8 @@ namespace Assignment2Prj
             _ball = new Ball(_verticalSpeed, _horizontalSpeed);
             _paddle = new Paddle(_paddleSpeed)
             {
-                Position = new PointF(_stageSize.Width / 2, _stageSize.Height - 40),
-                Size = new Size(100, 20)
+                Position = new PointF(_stageSize.Width / 2, _stageSize.Height - 18),
+                Size = new Size(100, 16)
             };
         }
 
