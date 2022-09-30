@@ -15,7 +15,8 @@ namespace Assignment2Prj
         {
             InitializeComponent();
 
-            _manager = new GameManager(Size);
+            ClientSize = new Size(800, 600);
+            _manager = new GameManager(ClientSize);
 
             _timer = new Timer { Interval = 1000 / 60 };
             _timer.Tick += Timer_Tick;
