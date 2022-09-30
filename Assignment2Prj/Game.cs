@@ -18,8 +18,20 @@ namespace Assignment2Prj
             _manager = new GameManager(Size);
 
             _timer = new Timer { Interval = 1000 / 60 };
-            _timer.Tick += (s, e) => Invalidate();
+            _timer.Tick += Timer_Tick;
             _timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            _manager.Update();
+
+            Invalidate();
+        }
+
+        private void Game_MouseMove(object sender, MouseEventArgs e)
+        {
+            _manager.HandleMouseMove(e);
         }
 
         protected override void OnPaint(PaintEventArgs e)

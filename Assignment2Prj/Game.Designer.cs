@@ -44,11 +44,12 @@
             this.ClientSize = new System.Drawing.Size(784, 561);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.Name = "Game";
             this.Text = "Breakout";
             this.Load += new System.EventHandler(this.Game_Load);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Game_MouseMove);
             this.ResumeLayout(false);
 
         }
