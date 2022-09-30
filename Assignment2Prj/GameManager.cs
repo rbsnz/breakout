@@ -1,18 +1,45 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Assignment2Prj
 {
-    class GameManager
+    class GameManager : IRenderable
     {
-        private Bricks _bricks;
-        private Ball _ball;
-        private Paddle _paddle;
+        private readonly Size _stageSize;
+        private readonly Bricks _bricks;
+        private readonly Ball _ball;
+        private readonly Paddle _paddle;
 
-        public GameManager(Bricks bricks, Ball ball, Paddle paddle)
+        private int _verticalSpeed;
+        private int _horizontalSpeed;
+        private int _bricksRows;
+        private int _bricksCols;
+        private int _paddleSpeed;
+
+        public GameManager(Size stageSize)
         {
-            _bricks = bricks;
-            _ball = ball;
-            _paddle = paddle;
+            _stageSize = stageSize;
+
+            _verticalSpeed = 5;
+            _horizontalSpeed = 5;
+            _bricksRows = 5;
+            _bricksCols = 8;
+            _paddleSpeed = 5;
+
+            _bricks = new Bricks(_bricksRows, _bricksCols);
+            _ball = new Ball(_verticalSpeed, _horizontalSpeed);
+            _paddle = new Paddle(_paddleSpeed)
+            {
+                Position = new PointF(_stageSize.Width / 2, _stageSize.Height - 40),
+                Size = new Size(100, 20)
+            };
+        }
+
+        public void Render(Graphics g)
+        {
+            g.Clear(Color.Black);
+
+            _paddle.Render(g);
         }
     }
 }
