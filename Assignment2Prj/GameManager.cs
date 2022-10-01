@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Numerics;
 using System.Windows.Forms;
 
 namespace Assignment2Prj
@@ -40,7 +41,7 @@ namespace Assignment2Prj
             _ball = new Ball()
             {
                 Position = new PointF(_stageSize.Width / 2, _stageSize.Height / 2),
-                Velocity = 12
+                Velocity = Vector2.Normalize(new Vector2(1.0f, 1.0f)) * 4.0f
             };
             _paddle = new Paddle(_paddleSpeed)
             {
@@ -56,31 +57,32 @@ namespace Assignment2Prj
 
         public void Update()
         {
-            int steps = (int)Math.Ceiling(_ball.Velocity);
+            int steps = (int)Math.Ceiling(_ball.Velocity.Length());
             for (int i = 0; i < steps; i++)
                 BallStep(1.0f / steps);
+
+            if (_ball.Position.Y > (_stageArea.Height + 100))
+            {
+                _ball.Position = new PointF(_stageArea.Width / 2, _stageArea.Height / 2);
+            }
         }
 
         private void BallStep(float fraction)
         {
-            float velocity = _ball.Velocity * fraction;
-            double angle = Math.Atan2(_ball.Direction.X, _ball.Direction.Y);
             _ball.Position = new PointF(
-                _ball.Position.X + (float)Math.Sin(angle) * _ball.Velocity * fraction,
-                _ball.Position.Y + (float)Math.Cos(angle) * _ball.Velocity * fraction
+                _ball.Position.X + _ball.Velocity.X * fraction,
+                _ball.Position.Y + _ball.Velocity.Y * fraction
             );
-            PointF dir = _ball.Direction;
-            if ((dir.Y > 0 && _ball.Rect.IntersectsWith(_paddle.Rect)) ||
-                (dir.Y < 0 && _ball.Rect.IntersectsWith(_topEdge)))
-            {
-                dir.Y *= -1;
-            }
-            if ((dir.X < 0 && _ball.Rect.IntersectsWith(_leftEdge)) ||
-                (dir.X > 0 && _ball.Rect.IntersectsWith(_rightEdge)))
-            {
-                dir.X *= -1;
-            }
-            _ball.Direction = dir;
+            Vector2 v2 = _ball.Velocity;
+            if ((v2.Y > 0 && _ball.Rect.IntersectsWith(_paddle.Rect)))
+                v2 = Vector2.Reflect(v2, new Vector2(0, -1));
+            if ((v2.Y < 0 && _ball.Rect.IntersectsWith(_topEdge)))
+                v2 = Vector2.Reflect(v2, new Vector2(0, 1));
+            if (v2.X < 0 && _ball.Rect.IntersectsWith(_leftEdge))
+                v2 = Vector2.Reflect(v2, new Vector2(1, 0));
+            if (v2.X > 0 && _ball.Rect.IntersectsWith(_rightEdge))
+                v2 = Vector2.Reflect(v2, new Vector2(-1, 0));
+            _ball.Velocity = v2;
         }
 
         public void Render(Graphics g)
