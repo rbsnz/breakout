@@ -11,6 +11,12 @@ namespace Assignment2Prj
         public PointF Position { get; set; }
         public SizeF Size { get; set; }
 
+        public RectangleF Rect => new RectangleF(
+            Position.X - Size.Width / 2,
+            Position.Y - Size.Height / 2,
+            Size.Width, Size.Height
+        );
+
         public Paddle(int paddleSpeed)
         {
             _paddleSpeed = paddleSpeed;

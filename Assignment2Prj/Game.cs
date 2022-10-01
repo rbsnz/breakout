@@ -15,10 +15,12 @@ namespace Assignment2Prj
         {
             InitializeComponent();
 
+            Cursor.Hide();
+
             ClientSize = new Size(800, 600);
             _manager = new GameManager(ClientSize);
 
-            _timer = new Timer { Interval = 1000 / 60 };
+            _timer = new Timer { Interval = 1000 / 100 };
             _timer.Tick += Timer_Tick;
             _timer.Start();
         }
