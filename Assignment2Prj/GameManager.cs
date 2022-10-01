@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
@@ -7,14 +8,16 @@ namespace Assignment2Prj
 {
     class GameManager : IRenderable
     {
+        const int BrickColumns = 16, BrickRows = 8;
+
         private readonly Size _stageSize;
 
         private readonly RectangleF
             _stageArea, _leftEdge, _rightEdge, _topEdge, _bottomEdge;
 
-        private readonly Bricks _bricks;
         private readonly Ball _ball;
         private readonly Paddle _paddle;
+        private readonly List<Brick> _bricks;
 
         private int _verticalSpeed;
         private int _horizontalSpeed;
@@ -37,7 +40,7 @@ namespace Assignment2Prj
             _bricksCols = 8;
             _paddleSpeed = 5;
 
-            _bricks = new Bricks(_bricksRows, _bricksCols);
+            _bricks = new List<Brick>();
             _ball = new Ball()
             {
                 Position = new PointF(_stageSize.Width / 2, _stageSize.Height / 2),
@@ -48,6 +51,19 @@ namespace Assignment2Prj
                 Position = new PointF(_stageSize.Width / 2, _stageSize.Height - 18),
                 Size = new Size(100, 16)
             };
+
+            SizeF brickSize = new SizeF((_stageSize.Width - 20.0f) / BrickColumns, 20);
+            for (int row = 0; row < BrickRows; row++)
+            {
+                for (int col = 0; col < BrickColumns; col++)
+                {
+                    _bricks.Add(new Brick
+                    {
+                        Position = new PointF(10 + brickSize.Width / 2 + brickSize.Width * col, 20 + row * 20),
+                        Size = brickSize
+                    });
+                }
+            }
         }
 
         public void HandleMouseMove(MouseEventArgs e)
@@ -90,6 +106,9 @@ namespace Assignment2Prj
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             g.Clear(Color.Black);
+
+            foreach (var brick in _bricks)
+                brick.Render(g);
 
             _paddle.Render(g);
             _ball.Render(g);
