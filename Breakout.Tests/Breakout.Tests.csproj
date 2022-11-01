@@ -57,7 +57,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Assignment2Prj\Breakout.csproj">
+    <ProjectReference Include="..\Breakout\Breakout.csproj">
       <Project>{d5c201a2-7ba6-42dc-9303-4f0ff47e152e}</Project>
       <Name>Breakout</Name>
     </ProjectReference>
