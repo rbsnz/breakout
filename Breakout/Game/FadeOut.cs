@@ -7,15 +7,14 @@ namespace Breakout.Game
 {
     public class FadeOut : GameScreen
     {
-        private readonly Action _onFadeOut;
-
         private float _opacity = 0.0f;
         private Brush _brush;
 
-        public FadeOut(GameManager manager, Action onFadeOut = null)
+        public Action OnComplete { get; set; }
+
+        public FadeOut(GameManager manager)
             : base(manager)
         {
-            _onFadeOut = onFadeOut;
             _brush = Brushes.Transparent;
         }
 
@@ -30,7 +29,7 @@ namespace Breakout.Game
             if (_opacity >= 0.99f)
             {
                 Manager.RemoveScreen(this);
-                _onFadeOut?.Invoke();
+                OnComplete?.Invoke();
             }
         }
 

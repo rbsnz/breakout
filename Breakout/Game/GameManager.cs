@@ -15,18 +15,11 @@ namespace Breakout.Game
 {
     public class GameManager : IDrawable
     {
-        private readonly Vector2 _stageSize;
-        private readonly RectangleF _stageArea;
-
         private LinkedList<GameScreen> _screens = new LinkedList<GameScreen>();
 
         public IUiManager Ui { get; }
         public FontManager Font { get; }
         public ISoundManager Sound { get; }
-
-        private TitleScreen _menuScreen;
-        private BreakoutScreen _breakoutScreen;
-        private PauseScreen _pauseScreen;
 
         public GameManager(IUiManager uiManager, ISoundManager soundManager)
         {
@@ -38,11 +31,9 @@ namespace Breakout.Game
                 (Theme.BrickColumns * Theme.BrickWidth + 2) * Theme.BrickUnit,
                 (Theme.BrickRows + 22) * Theme.BrickUnit
             );
-
-            _stageArea = new RectangleF(0, 0, _stageSize.X, _stageSize.Y);
         }
 
-        // Screens
+        // Screen management
         private IEnumerable<GameScreen> EnumerateScreens()
         {
             var node = _screens.First;
@@ -58,7 +49,29 @@ namespace Breakout.Game
             _screens.AddLast(screen);
             screen.HandleAdd();
         }
+
+        public T AddScreen<T>(Action<T> configure) where T : GameScreen
+        {
+            var constructor = typeof(T).GetConstructor(new Type[] { typeof(GameManager) });
+            if (constructor is null)
+                throw new InvalidOperationException($"The screen must have a constructor that accepts a single GameManager parameter.");
+
+            T screen = (T)constructor.Invoke(new object[] { this });
+
+            if (!(configure is null))
+                configure(screen);
+
+            AddScreen(screen);
+            return screen;
+        }
+
+        public T AddScreen<T>() where T : GameScreen => AddScreen<T>(null);
+
+        public void AddFadeIn(Action onComplete = null) => AddScreen<FadeIn>(x => x.OnComplete = onComplete);
+        public void AddFadeOut(Action onComplete = null) => AddFadeOut<FadeOut>(x => x.OnComplete = onComplete);
+
         public T GetScreen<T>() where T : GameScreen => _screens.OfType<T>().FirstOrDefault();
+
         public bool RemoveScreen(GameScreen screen)
         {
             if (_screens.Remove(screen))
@@ -72,10 +85,9 @@ namespace Breakout.Game
             }
         }
 
-        public void Initialize()
-        {
+        public bool RemoveScreen<T>() where T : GameScreen => RemoveScreen(GetScreen<T>());
 
-        }
+        public void Initialize() { }
 
         internal void HandleMouseMove(MouseEventArgs e)
         {

@@ -8,18 +8,25 @@ using Breakout.Services;
 namespace Breakout.Game
 {
     /// <summary>
-    /// Represents a game screen that receives input, updates, and draws.
+    /// Represents a game screen that may receive input, update, and draw.
     /// </summary>
     public abstract class GameScreen : IDisposable
     {
         protected bool _disposed;
 
         public GameManager Manager { get; }
+
+        public bool IsActive { get; set; } = true;
+
+        // Defines properties/methods that proxy to the game manager for convenience.
         public IUiManager Ui => Manager.Ui;
         public FontManager Font => Manager.Font;
         public ISoundManager Sound => Manager.Sound;
 
-        public bool IsActive { get; set; } = true;
+        protected void AddScreen(GameScreen screen) => Manager.AddScreen(screen);
+        protected void AddScreen<T>() where T : GameScreen => Manager.AddScreen<T>();
+        protected bool RemoveScreen(GameScreen screen) => Manager.RemoveScreen(screen);
+        protected bool RemoveScreen<T>() where T : GameScreen => Manager.RemoveScreen<T>();
 
         protected GameScreen(GameManager manager)
         {

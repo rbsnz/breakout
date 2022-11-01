@@ -108,10 +108,7 @@ namespace Breakout.Game
 
             Ui.Deactivate += OnUiDeactivated;
             Manager.AddScreen(_pauseScreen);
-            Manager.AddScreen(new FadeIn(Manager, () =>
-            {
-                _frozen = false;
-            }));
+            Manager.AddScreen<FadeIn>(x => x.OnComplete = () => { _frozen = false; });
         }
 
         protected override void OnRemove()

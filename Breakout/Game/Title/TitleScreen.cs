@@ -59,23 +59,23 @@ namespace Breakout.Game
                 Manager.AddScreen(new FadeOut(Manager, () =>
                 {
                     Manager.RemoveScreen(this);
-                    Manager.AddScreen(new BreakoutScreen(Manager));
+                    Manager.AddScreen<BreakoutScreen>();
                 }));
             }
             else if (_buttonHighScores.Bounds.Contains(e.Location))
             {
                 _transitioning = true;
-                Manager.AddScreen(new FadeOut(Manager, () =>
+                AddScreen(new FadeOut(Manager, () =>
                 {
-                    Manager.RemoveScreen(this);
-                    Manager.AddScreen(new HighScoreScreen(Manager));
-                    Manager.AddScreen(new FadeIn(Manager));
+                    RemoveScreen(this);
+                    AddScreen<HighScoreScreen>();
+                    AddScreen<FadeIn>();
                 }));
             }
             else if (_buttonQuit.Bounds.Contains(e.Location))
             {
                 _transitioning = true;
-                Manager.AddScreen(new FadeOut(Manager, () =>
+                AddScreen(new FadeOut(Manager, () =>
                 {
                     Ui.Close();
                 }));

@@ -5,17 +5,16 @@ namespace Breakout.Game
 {
     public class FadeIn : GameScreen
     {
-        private readonly Action _onComplete;
-
         private Brush _brush = Brushes.Black;
         private float _opacity = 1.0f;
 
         private DateTime _created;
 
-        public FadeIn(GameManager manager, Action onComplete = null)
+        public Action OnComplete { get; set; }
+
+        public FadeIn(GameManager manager)
             : base(manager)
         {
-            _onComplete = onComplete;
             _created = DateTime.Now;
         }
 
@@ -29,7 +28,7 @@ namespace Breakout.Game
             if (_opacity <= 0)
             {
                 Manager.RemoveScreen(this);
-                _onComplete?.Invoke();
+                OnComplete?.Invoke();
             }
         }
 
