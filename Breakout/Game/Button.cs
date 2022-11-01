@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Numerics;
 
 namespace Breakout.Game
@@ -9,8 +8,8 @@ namespace Breakout.Game
         public Font Font { get; }
         public string Text { get; }
 
-        public bool IsVisible { get; set; }
-        public bool IsEnabled { get; set; }
+        public bool IsVisible { get; set; } = true;
+        public bool IsEnabled { get; set; } = true;
 
         public Vector2 Position { get; set; }
         public SizeF Size { get; }
@@ -37,8 +36,10 @@ namespace Breakout.Game
 
         public void Draw(Graphics g)
         {
+            if (!IsVisible) return;
+
             g.DrawString(Text, Font, Brushes.Magenta, Position.ToPointF());
-            g.DrawString(Text, Font, Brushes.Yellow, (Position - new Vector2(4, 4) * _transition).ToPointF());
+            g.DrawString(Text, Font, Brushes.Yellow, (Position - new Vector2(Font.Size / 10, Font.Size / 10) * _transition).ToPointF());
         }
     }
 }
