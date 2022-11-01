@@ -1,6 +1,6 @@
-﻿namespace Assignment2Prj
+﻿namespace Breakout
 {
-    partial class Game
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -37,7 +37,7 @@
             this.timer.Enabled = true;
             this.timer.Interval = 25;
             // 
-            // Game
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -46,10 +46,14 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
-            this.Name = "Game";
+            this.Name = "MainForm";
             this.Text = "Breakout";
-            this.Load += new System.EventHandler(this.Game_Load);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Game_MouseMove);
+            this.Load += new System.EventHandler(this.OnLoad);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnKeyUp);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnMouseUp);
             this.ResumeLayout(false);
 
         }

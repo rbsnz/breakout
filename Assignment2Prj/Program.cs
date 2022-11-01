@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Assignment2Prj
+namespace Breakout
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace Assignment2Prj
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Game());
+            Application.Run(new MainForm());
         }
     }
 }
