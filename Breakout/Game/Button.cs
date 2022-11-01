@@ -39,7 +39,7 @@ namespace Breakout.Game
             if (!IsVisible) return;
 
             g.DrawString(Text, Font, Brushes.Magenta, Position.ToPointF());
-            g.DrawString(Text, Font, Brushes.Yellow, (Position - new Vector2(Font.Size / 10, Font.Size / 10) * _transition).ToPointF());
+            g.DrawString(Text, Font, Brushes.Yellow, (Position - new Vector2(Font.Size / 8, Font.Size / 8) * _transition).ToPointF());
         }
     }
 }
