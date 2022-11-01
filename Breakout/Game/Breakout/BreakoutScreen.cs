@@ -54,8 +54,6 @@ namespace Breakout.Game
         {
             _pauseScreen = new PauseScreen(manager);
 
-            _scoreOverlay = new ScoreOverlay(Manager.Font, Manager.Ui);
-
             // Initialize paddle, ball
             _paddle = new Paddle()
             {
@@ -95,7 +93,7 @@ namespace Breakout.Game
             // Load sounds
             _hitSound = Sound.Load(@"res\sound\tone1.wav");
 
-            _scoreOverlay = new ScoreOverlay(Font, Ui);
+            _scoreOverlay = new ScoreOverlay(Font, Ui, _paddle);
         }
 
         private void OnUiDeactivated(object sender, EventArgs e)
@@ -371,6 +369,8 @@ namespace Breakout.Game
             for (int i = 0; i < _hitRings.Count; i++)
                 if (!_hitRings[i].Update())
                     _hitRings.RemoveAt(i--);
+
+            _scoreOverlay.Update();
 
             if (!_alive) return;
 

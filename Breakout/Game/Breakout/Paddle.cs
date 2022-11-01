@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace Breakout.Game
 {
-    class Paddle : IDrawable
+    public class Paddle : IDrawable
     {
         const float LerpAmount = 1 / 3f;
 
