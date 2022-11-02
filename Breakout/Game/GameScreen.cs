@@ -2,31 +2,28 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-using Breakout.Data;
-using Breakout.Fonts;
 using Breakout.Services;
 
 namespace Breakout.Game
 {
     /// <summary>
-    /// Represents a game screen that may receive input, update, and draw.
+    /// Represents a game screen that may receive input, update, and draw to the screen.
     /// </summary>
     public abstract class GameScreen : IDisposable
     {
         protected bool _disposed;
 
+        // Store a reference to the game manager.
         public GameManager Manager { get; }
-
-        public bool IsActive { get; set; } = true;
 
         // Defines properties/methods that proxy to the game manager for convenience.
         public IUiManager Ui => Manager.Ui;
-        public FontManager Font => Manager.Font;
+        public IFontManager Font => Manager.Font;
         public ISoundManager Sound => Manager.Sound;
-        public HighScores HighScores => Manager.HighScores;
+        public IHighScores HighScores => Manager.HighScores;
 
         protected void AddScreen(GameScreen screen) => Manager.AddScreen(screen);
-        protected void AddScreen<T>(Action<T> configure = null) where T : GameScreen => Manager.AddScreen<T>();
+        protected void AddScreen<T>(Action<T> configure = null) where T : GameScreen => Manager.AddScreen<T>(configure);
         protected void AddFadeIn(Action onComplete = null) => Manager.AddFadeIn(onComplete);
         protected void AddFadeOut(Action onComplete = null) => Manager.AddFadeOut(onComplete);
         protected bool RemoveScreen(GameScreen screen) => Manager.RemoveScreen(screen);

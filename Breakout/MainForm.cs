@@ -2,7 +2,8 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
+using Breakout.Data;
+using Breakout.Fonts;
 using Breakout.Game;
 
 namespace Breakout
@@ -20,21 +21,37 @@ namespace Breakout
         {
             InitializeComponent();
 
-            _graphics = CreateGraphics();
+            try
+            {
+                _graphics = CreateGraphics();
 
-            _manager = new GameManager(this, new SoundManager());
+                _manager = new GameManager(
+                    this,
+                    new FontManager(@"res\font"),
+                    new SoundManager(),
+                    new HighScores()
+                );
 
-            _timer = new Timer { Interval = 1000 / 100 };
-            _timer.Tick += OnTick;
-            _timer.Start();
+                _timer = new Timer { Interval = 1000 / 100 };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this,
+                    $"An error occurred during initialization.\n{ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error
+                );
+                Close();
+            }
         }
 
         public SizeF MeasureString(string text, Font font) => _graphics.MeasureString(text, font);
 
         private void OnLoad(object sender, EventArgs e)
         {
-            _manager.Initialize();
             _manager.AddScreen<TitleScreen>();
+
+            _timer.Tick += OnTick;
+            _timer.Start();
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e) => _manager.HandleMouseMove(e);

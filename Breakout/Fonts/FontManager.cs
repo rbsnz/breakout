@@ -4,15 +4,20 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 
+using Breakout.Services;
+
 namespace Breakout.Fonts
 {
-    public class FontManager
+    public class FontManager : IFontManager
     {
         private readonly PrivateFontCollection _pfc;
 
         private readonly Dictionary<string, FontFamily> _families;
         private readonly Dictionary<(FontFamily, float), Font> _fontCache;
 
+        /// <summary>
+        /// Constructs a new font manager that loads fonts from the specified directory.
+        /// </summary>
         public FontManager(string fontsDirectory)
         {
             _pfc = new PrivateFontCollection();
@@ -31,15 +36,7 @@ namespace Breakout.Fonts
                 _families[fontFamily.Name] = fontFamily;
         }
 
-        public void AddFontFile(string filename)
-        {
-            if (filename is null)
-                throw new ArgumentNullException(filename);
-
-            _pfc.AddFontFile(filename);
-            UpdateFontFamilyMap();
-        }
-
+        /// <inheritdoc/>
         public FontFamily GetFontFamily(string familyName)
         {
             if (familyName is null)
@@ -51,9 +48,9 @@ namespace Breakout.Fonts
             return fontFamily;
         }
 
-        public Font GetFont(string familyName, float size)
+        /// <inheritdoc/>
+        public Font GetFont(FontFamily family, float size)
         {
-            FontFamily family = GetFontFamily(familyName);
             var key = (family, size);
 
             if (!_fontCache.TryGetValue(key, out Font font))
@@ -63,5 +60,8 @@ namespace Breakout.Fonts
 
             return font;
         }
+
+        /// <inheritdoc/>
+        public Font GetFont(string familyName, float size) => GetFont(GetFontFamily(familyName), size);
     }
 }

@@ -16,24 +16,26 @@ namespace Breakout.Game
         private readonly Text _nameText;
 
         private readonly bool _isHighScore;
+        private readonly bool _won;
 
         private bool _transitioning;
 
         private string _name = "";
 
-        public GameOverScreen(GameManager manager, int score)
+        public GameOverScreen(GameManager manager, int score, bool won)
             : base(manager)
         {
             _font = Font.GetFont(Theme.FontFamily, 20.0f);
             _dimmer = new Dimmer();
             _score = score;
+            _won = won;
 
             _isHighScore = manager.HighScores.IsHighScore(_score);
 
-            string gameOverString = "GAME OVER!";
+            string gameOverString = won ? "GAME WON!" : "GAME OVER!";
             if (_isHighScore)
             {
-                gameOverString += "\n\nYou got a high score.\nEnter your name:\n";
+                gameOverString += "\n\nYou got a high score!\nEnter your name:\n";
             }
             else
             {

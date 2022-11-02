@@ -231,15 +231,21 @@ namespace Breakout.Game
         }
         #endregion
 
+        /// <summary>
+        /// Hides the mouse and prevents it from escaping the window bounds.
+        /// </summary>
         private void CaptureMouse()
         {
             if (_isMouseCaptured) return;
             _isMouseCaptured = true;
 
-            Cursor.Hide();
             Cursor.Clip = Ui.RectangleToScreen(Ui.ClientRectangle);
+            Cursor.Hide();
         }
 
+        /// <summary>
+        /// Shows the mouse and allows it to move beyond the window bounds.
+        /// </summary>
         private void ReleaseMouse()
         {
             if (!_isMouseCaptured) return;
@@ -249,6 +255,9 @@ namespace Breakout.Game
             Cursor.Show();
         }
 
+        /// <summary>
+        /// Pauses the game.
+        /// </summary>
         private void Pause()
         {
             if (IsPaused) return;
@@ -257,23 +266,43 @@ namespace Breakout.Game
             ReleaseMouse();
         }
 
+        /// <summary>
+        /// Unpauses the game.
+        /// </summary>
         private void Unpause()
         {
             if (!IsPaused) return;
 
             IsPaused = false;
             CaptureMouse();
+
+            // Move the mouse back to the paddle position to prevent it from teleporting when unpausing.
             Cursor.Position = Ui.PointToScreen(new Point((int)_paddle.Position.X, (int)Ui.ClientSize.Height / 2));
         }
 
+        private void EndGame()
+        {
+            if (!_alive) return;
+            _alive = false;
+
+            ReleaseMouse();
+
+            // Add the game over screen providing the score and whether the game was won (there are no more bricks).
+            AddScreen(new GameOverScreen(Manager, _scoreOverlay.Value, _bricks.Count == 0));
+        }
+
+        /// <summary>
+        /// Moves the ball by the specified velocity and handles collisions between bricks.
+        /// </summary>
         private void MoveBall(Ball ball, ref Vector2 v)
         {
+            // Move the ball by its velocity.
             ball.Move(v);
 
             Vector2 ballVelocity = ball.Velocity;
 
             // Detect collisions
-            RectangleF ballBounds = ball.Rect;
+            RectangleF ballBounds = ball.Bounds;
 
             if (ballBounds.IntersectsWith(_paddle.Bounds))
             {
@@ -289,28 +318,38 @@ namespace Breakout.Game
                 ball.Velocity = paddleReflectionNormal * ball.Velocity.Length();
             }
 
+            // Bounce the ball off the side walls.
             if ((ball.Velocity.X < 0 && ball.Position.X < ball.Radius) ||
                 (ball.Velocity.X > 0 && ball.Position.X > (Ui.ClientSize.Width - ball.Radius)))
             {
                 ball.Velocity *= new Vector2(-1, 1);
             }
 
+            // Bounce the ball off the ceiling.
             if (ball.Velocity.Y < 0 && ball.Position.Y < ball.Radius)
             {
                 ball.Velocity *= new Vector2(1, -1);
             }
 
+            // Calculate collisions with bricks.
+            // Define the collision brick, maximum collision area
+            // and total intersection bounds.
             float maxCollisionArea = 0;
             Brick collisionBrick = null;
             RectangleF totalIntersection = default;
+
             for (int i = 0; i < _bricks.Count; i++)
             {
                 Brick brick = _bricks[i];
 
+                // Get the brick bounds and calculate the intersection area with the ball bounds.
                 RectangleF bounds = brick.Bounds;
                 RectangleF intersection = RectangleF.Intersect(ballBounds, bounds);
+
+                // Skip this brick if there is no collision.
                 if (intersection.IsEmpty) continue;
 
+                // Take the brick with the largest intersection area in case of collisions with multiple bricks.
                 float area = intersection.Width * intersection.Height;
                 if (area > maxCollisionArea)
                 {
@@ -318,6 +357,7 @@ namespace Breakout.Game
                     collisionBrick = brick;
                 }
 
+                // Add up the total intersection area in case of collision with multiple bricks.
                 if (totalIntersection.IsEmpty)
                 {
                     totalIntersection = intersection;
@@ -329,10 +369,14 @@ namespace Breakout.Game
 
             }
 
+            // If the ball collided with a brick.
             if (collisionBrick != null)
             {
+                // Handle the collision between the ball and brick.
                 HandleCollision(ball, collisionBrick);
 
+                // Determine if the brick was hit on the sides or the top/bottom
+                // by checking if the total intersection area is wider or taller.
                 if (totalIntersection.Width > totalIntersection.Height)
                 {
                     ball.Velocity *= new Vector2(1, -1);
@@ -343,6 +387,7 @@ namespace Breakout.Game
                 }
             }
 
+            // Play a sound when the ball bounces.
             if (ballVelocity != ball.Velocity)
             {
                 Sound.Play(_hitSound);
@@ -351,31 +396,45 @@ namespace Breakout.Game
 
         private void HandleCollision(Ball ball, Brick brick)
         {
+            // Get the color of the brick.
             Color color = Theme.FirmnessColors[brick.Firmness];
 
             if (ball.Color == color)
             {
+                // If the ball is the same color as the brick, increment the combo counter.
                 _combo++;
             }
             else
             {
-                // Reset combo
-                ball.Color = color;
+                // Otherwise reset the combo counter.
                 _combo = 0;
+
+                // Change the ball color to the brick's color and add a visual hit effect.
+                ball.Color = color;
                 _hitRings.Add(new HitRing(ball.Position, ball.Radius, color));
             }
 
+            // Calculate the score to be added.
             int additionalScore = 10;
 
+            // If the brick's firmness is zero, destroy it and add an extra 5 points.
             if (--brick.Firmness == 0)
             {
                 _bricks.Remove(brick);
                 additionalScore += 5;
+
+                if (_bricks.Count == 0)
+                {
+                    // End the game if there are no more bricks.
+                    EndGame();
+                }
             }
 
+            // Add extra points for the combo counter.
             additionalScore += _combo;
             Score += additionalScore;
 
+            // Display a visual effect indicating the score added where the brick was hit.
             _hitScores.Add(new HitScore(
                 Manager,
                 brick.Position + brick.Size / 2,
@@ -388,7 +447,7 @@ namespace Breakout.Game
         {
             if (IsPaused) return;
 
-            // Update visual elements (hit scores & hit rings)
+            // Update visual elements (hit scores & hit rings).
             for (int i = 0; i < _hitScores.Count; i++)
                 if (!_hitScores[i].Update())
                     _hitScores.RemoveAt(i--);
@@ -403,14 +462,14 @@ namespace Breakout.Game
 
             if (!_frozen)
             {
+                // Move the ball by its velocity.
                 Vector2 v = _ball.Velocity;
                 MoveBall(_ball, ref v);
 
+                // End the game if the ball falls below the game area.
                 if (_ball.Position.Y > (Ui.ClientSize.Height + 100))
                 {
-                    _alive = false;
-                    ReleaseMouse();
-                    AddScreen(new GameOverScreen(Manager, _scoreOverlay.Value));
+                    EndGame();
                 }
             }
 

@@ -18,10 +18,10 @@ namespace Breakout
 
         public SoundManager()
         {
-            _output = new WaveOutEvent { DesiredLatency = 125 };
+            _output = new WaveOutEvent { DesiredLatency = 100 };
             _mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(44_100, 2)) { ReadFully = true };
 
-            _output.Volume = 0;
+            _output.Volume = 0.8f;
             _output.Init(_mixer);
             _output.Play();
         }
@@ -32,11 +32,13 @@ namespace Breakout
             {
                 return input;
             }
+
             if (input.WaveFormat.Channels == 1 && _mixer.WaveFormat.Channels == 2)
             {
                 return new MonoToStereoSampleProvider(input);
             }
-            throw new NotImplementedException("Not yet implemented this channel count conversion");
+
+            throw new NotImplementedException("Conversion for this channel count is not yet implemented.");
         }
 
         private void AddMixerInput(ISampleProvider input)

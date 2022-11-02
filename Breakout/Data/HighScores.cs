@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Breakout.Services;
+
 namespace Breakout.Data
 {
-    /// <summary>
-    /// Manages the high score database.
-    /// </summary>
-    public class HighScores : IReadOnlyList<HighScore>
+    /// <inheritdoc/>
+    public class HighScores : IHighScores
     {
         private readonly List<HighScore> _scores = new List<HighScore>();
 
@@ -18,9 +18,7 @@ namespace Breakout.Data
         /// </summary>
         public string FilePath { get; }
 
-        /// <summary>
-        /// The maximum number of high scores to store.
-        /// </summary>
+        /// <inheritdoc/>
         public int MaxScores { get; }
 
         /// <summary>
@@ -44,6 +42,13 @@ namespace Breakout.Data
             Load();
         }
 
+        // Return the enumerator of the backing list.
+        public IEnumerator<HighScore> GetEnumerator() => _scores.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        /// <summary>
+        /// Sorts the scores and removes the lowest scores if there are more than <see cref="MaxScores"/> in the list.
+        /// </summary>
         private void SortScores()
         {
             _scores.Sort();
@@ -51,9 +56,7 @@ namespace Breakout.Data
                 _scores.RemoveRange(MaxScores, _scores.Count - MaxScores);
         }
 
-        /// <summary>
-        /// Gets if the specified score qualifies as a high score.
-        /// </summary>
+        /// <inheritdoc/>
         public bool IsHighScore(int value) => (_scores.Count < MaxScores) || (value > _scores.Min(x => x.Score));
 
         /// <summary>
@@ -63,6 +66,7 @@ namespace Breakout.Data
         {
             _scores.Clear();
 
+            // Load each score from the specified file path.
             if (File.Exists(FilePath))
             {
                 using (Stream fileStream = File.OpenRead(FilePath))
@@ -83,6 +87,7 @@ namespace Breakout.Data
                 }
             }
 
+            // Sort scores after loading.
             SortScores();
         }
 
@@ -91,8 +96,10 @@ namespace Breakout.Data
         /// </summary>
         private void Save()
         {
+            // Sort scores before saving.
             SortScores();
 
+            // Save each score to the specified file path.
             using (Stream fileStream = File.OpenWrite(FilePath))
             using (BinaryWriter writer = new BinaryWriter(fileStream))
             {
@@ -106,9 +113,7 @@ namespace Breakout.Data
             }
         }
 
-        /// <summary>
-        /// Adds the specified high score
-        /// </summary>
+        /// <inheritdoc/>
         public bool Add(HighScore highScore)
         {
             if (!IsHighScore(highScore.Score))
@@ -120,17 +125,12 @@ namespace Breakout.Data
             return true;
         }
 
-        /// <summary>
-        /// Resets all scores.
-        /// </summary>
+        /// <inheritdoc/>
         public void Clear()
         {
             _scores.Clear();
 
             try { File.Delete(FilePath); } catch { }
         }
-
-        public IEnumerator<HighScore> GetEnumerator() => _scores.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
