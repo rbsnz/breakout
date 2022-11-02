@@ -20,7 +20,7 @@ namespace Breakout.Game
         public IUiManager Ui { get; }
         public FontManager Font { get; }
         public ISoundManager Sound { get; }
-        public HighScoreManager HighScores { get; }
+        public HighScores HighScores { get; }
 
         public GameManager(IUiManager uiManager, ISoundManager soundManager)
         {
@@ -33,7 +33,7 @@ namespace Breakout.Game
                 (Theme.BrickRows + 22) * Theme.BrickUnit
             );
 
-            HighScores = new HighScoreManager();
+            HighScores = new HighScores();
         }
 
         // Screen management

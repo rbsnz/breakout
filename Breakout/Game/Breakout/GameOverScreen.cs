@@ -98,7 +98,7 @@ namespace Breakout.Game
                 if (!string.IsNullOrWhiteSpace(_name))
                 {
                     _transitioning = true;
-                    Manager.HighScores.Add(new HighScore(_name, _score));
+                    Manager.HighScores.Add(new HighScore(_score, _name));
                     AddFadeOut(() =>
                     {
                         RemoveScreen<BreakoutScreen>();

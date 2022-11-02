@@ -76,7 +76,7 @@ namespace Breakout.Game
                     Position = Manager.Ui.ClientSize.ToVector2() / 2
                 };
 
-                Manager.HighScores.Reset();
+                Manager.HighScores.Clear();
             }
         }
 

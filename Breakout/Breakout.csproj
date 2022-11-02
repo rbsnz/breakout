@@ -102,7 +102,7 @@
     <Compile Include="Game\FadeOut.cs" />
     <Compile Include="Game\Breakout\GameOverScreen.cs" />
     <Compile Include="Game\GameScreen.cs" />
-    <Compile Include="Data\HighScoreManager.cs" />
+    <Compile Include="Data\HighScores.cs" />
     <Compile Include="Game\HighScore\HighScoreScreen.cs" />
     <Compile Include="Game\Text.cs" />
     <Compile Include="Game\Title\TitleScreen.cs" />

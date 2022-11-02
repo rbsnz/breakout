@@ -9,11 +9,14 @@ namespace Breakout.Data
     /// <summary>
     /// Manages the high score database.
     /// </summary>
-    public class HighScoreManager : IReadOnlyList<HighScore>
+    public class HighScores : IReadOnlyList<HighScore>
     {
-        private readonly string _scoreFilePath;
-
         private readonly List<HighScore> _scores = new List<HighScore>();
+
+        /// <summary>
+        /// Gets the path of the high scores file.
+        /// </summary>
+        public string FilePath { get; }
 
         /// <summary>
         /// The maximum number of high scores to store.
@@ -31,20 +34,19 @@ namespace Breakout.Data
         public HighScore this[int index] => _scores[index];
 
         /// <summary>
-        /// Constructs a new high score manager.
+        /// Constructs a new high score manager with the specified file path and max scores.
         /// </summary>
-        public HighScoreManager(int maxScores = 10)
+        public HighScores(string filePath = @"%LOCALAPPDATA%\breakout.scores", int maxScores = 5)
         {
+            FilePath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(filePath));
             MaxScores = maxScores;
-
-            _scoreFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "breakout.scores");
 
             Load();
         }
 
         private void SortScores()
         {
-            _scores.Sort((a, b) => b.Score - a.Score);
+            _scores.Sort();
             if (_scores.Count > MaxScores)
                 _scores.RemoveRange(MaxScores, _scores.Count - MaxScores);
         }
@@ -61,17 +63,22 @@ namespace Breakout.Data
         {
             _scores.Clear();
 
-            if (File.Exists(_scoreFilePath))
+            if (File.Exists(FilePath))
             {
-                using (Stream fileStream = File.OpenRead(_scoreFilePath))
+                using (Stream fileStream = File.OpenRead(FilePath))
                 using (BinaryReader reader = new BinaryReader(fileStream))
                 {
-                    int count = reader.ReadByte();
-                    for (int i = 0; i < count; i++)
+                    if (fileStream.Position < fileStream.Length)
                     {
-                        int score = reader.ReadInt32();
-                        string name = reader.ReadString();
-                        _scores.Add(new HighScore(name, score));
+                        int count = reader.ReadByte();
+                        for (int i = 0; i < count; i++)
+                        {
+                            DateTime date = DateTime.FromBinary(reader.ReadInt64());
+                            int score = reader.ReadInt32();
+                            string name = reader.ReadString();
+                            
+                            _scores.Add(new HighScore(date, score, name));
+                        }
                     }
                 }
             }
@@ -80,18 +87,19 @@ namespace Breakout.Data
         }
 
         /// <summary>
-        /// Saves the top 10 high scores from the specified list.
+        /// Saves the top high scores from the specified list.
         /// </summary>
         private void Save()
         {
             SortScores();
 
-            using (Stream fileStream = File.OpenWrite(_scoreFilePath))
+            using (Stream fileStream = File.OpenWrite(FilePath))
             using (BinaryWriter writer = new BinaryWriter(fileStream))
             {
                 writer.Write((byte)_scores.Count);
                 foreach (var highScore in _scores)
                 {
+                    writer.Write(highScore.Date.ToBinary());
                     writer.Write(highScore.Score);
                     writer.Write(highScore.Name);
                 }
@@ -99,23 +107,27 @@ namespace Breakout.Data
         }
 
         /// <summary>
-        /// Adds the specified high score.
+        /// Adds the specified high score
         /// </summary>
-        public void Add(HighScore highScore)
+        public bool Add(HighScore highScore)
         {
+            if (!IsHighScore(highScore.Score))
+                return false;
+
             _scores.Add(highScore);
             SortScores();
             Save();
+            return true;
         }
 
         /// <summary>
         /// Resets all scores.
         /// </summary>
-        public void Reset()
+        public void Clear()
         {
             _scores.Clear();
 
-            try { File.Delete(_scoreFilePath); } catch { }
+            try { File.Delete(FilePath); } catch { }
         }
 
         public IEnumerator<HighScore> GetEnumerator() => _scores.GetEnumerator();
