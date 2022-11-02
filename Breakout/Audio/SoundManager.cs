@@ -7,6 +7,8 @@ using NAudio.Wave.SampleProviders;
 using Breakout.Audio;
 using Breakout.Services;
 
+// Source: https://markheath.net/post/fire-and-forget-audio-playback-with
+
 namespace Breakout
 {
     public class SoundManager : ISoundManager
