@@ -7,11 +7,11 @@ namespace Breakout.Game
 {
     public class ScoreOverlay : IDrawable
     {
-        private readonly IUiManager _uiManager;
-
+        private readonly GameManager _manager;
         private readonly Font _font;
 
-        private SizeF _size;
+        private readonly Paddle _paddle;
+        private readonly Text _text;
 
         private int _value;
         public int Value
@@ -20,65 +20,52 @@ namespace Breakout.Game
             set
             {
                 _value = value;
-                _size = _uiManager.MeasureString(Text, _font);
+                _text.Value = $"Score: {value}";
             }
         }
 
-        public Vector2 Position { get; set; }
-        public StringFormat Format { get; set; }
-
-        public string Text => $"Score: {_value}";
-
-        private readonly Paddle _paddle;
-
-        public ScoreOverlay(FontManager fontManager, IUiManager uiManager, Paddle paddle)
+        public ScoreOverlay(GameManager manager, Paddle paddle)
         {
-            _uiManager = uiManager;
-
-            _font = fontManager.GetFont(Theme.FontFamily, 16.0f);
-
+            _manager = manager;
             _paddle = paddle;
 
-            Position = Vector2.Zero;
-            Format = StringFormat.GenericDefault;
+            _font = _manager.Font.GetFont(Theme.FontFamily, 16.0f);
+
+            _text = new Text(_manager, _font) { Color = Color.Yellow };
 
             Value = 0;
-
             PositionLeft();
         }
 
         private void PositionLeft()
         {
-            Position = new Vector2(10, _uiManager.ClientSize.Height - 10);
-            Format = StringFormats.BottomLeft;
+            _text.Position = new Vector2(10, _manager.Ui.ClientSize.Height - 10);
+            _text.Alignment = ContentAlignment.BottomLeft;
         }
 
         private void PositionRight()
         {
-            Position = new Vector2(_uiManager.ClientSize.Width - 10, _uiManager.ClientSize.Height - 10);
-            Format = StringFormats.BottomRight;
+            _text.Position = new Vector2(_manager.Ui.ClientSize.Width - 10, _manager.Ui.ClientSize.Height - 10);
+            _text.Alignment = ContentAlignment.BottomRight;
         }
 
         public void Update()
         {
             float
-                centerX = _uiManager.ClientSize.Width / 2,
+                centerX = _manager.Ui.ClientSize.Width / 2,
                 paddleLeft = _paddle.Position.X - (_paddle.Size.Width / 2),
                 paddleRight = _paddle.Position.X + (_paddle.Size.Width / 2);
 
-            if (Position.X < centerX && paddleLeft < (Position.X + _size.Width + 10))
+            if (_text.Position.X < centerX && paddleLeft < (_text.Position.X + _text.Size.Width + 10))
             {
                 PositionRight();
             }
-            else if (Position.X > centerX && paddleRight > (Position.X - _size.Width - 10))
+            else if (_text.Position.X > centerX && paddleRight > (_text.Position.X - _text.Size.Width - 10))
             {
                 PositionLeft();
             }
         }
 
-        public void Draw(Graphics g)
-        {
-            g.DrawString(Text, _font, Brushes.Yellow, Position.ToPointF(), Format);
-        }
+        public void Draw(Graphics g) => _text.Draw(g);
     }
 }

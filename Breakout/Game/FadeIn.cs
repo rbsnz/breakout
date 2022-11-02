@@ -5,10 +5,8 @@ namespace Breakout.Game
 {
     public class FadeIn : GameScreen
     {
-        private Brush _brush = Brushes.Black;
-        private float _opacity = 1.0f;
-
-        private DateTime _created;
+        private readonly DateTime _created;
+        private readonly Dimmer _dimmer;
 
         public Action OnComplete { get; set; }
 
@@ -16,25 +14,28 @@ namespace Breakout.Game
             : base(manager)
         {
             _created = DateTime.Now;
+            _dimmer = new Dimmer
+            {
+                Dim = false,
+                Opacity = 1,
+                Strength = 1.0f,
+                LerpAmount = 0.1f
+            };
         }
 
         protected override void OnUpdate()
         {
-            if ((DateTime.Now - _created).TotalSeconds < 0.1) return;
+            if ((DateTime.Now - _created).TotalSeconds < 0.2) return;
 
-            _opacity -= 0.03f;
-            _brush = new SolidBrush(Color.FromArgb((int)(Math.Max(0, _opacity) * 255), Color.Black));
+            _dimmer.Update();
 
-            if (_opacity <= 0)
+            if (_dimmer.Opacity <= 0.05f)
             {
                 Manager.RemoveScreen(this);
                 OnComplete?.Invoke();
             }
         }
 
-        protected override void OnDraw(Graphics g)
-        {
-            g.FillRectangle(_brush, Ui.ClientRectangle);
-        }
+        protected override void OnDraw(Graphics g) => _dimmer.Draw(g);
     }
 }

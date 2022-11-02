@@ -37,6 +37,8 @@ namespace Breakout.Game
             _buttonPlay.Position = new Vector2(cw - _buttonPlay.Size.Width / 2, offset * 2 - _buttonPlay.Size.Height / 2);
             _buttonHighScores.Position = new Vector2(cw - _buttonHighScores.Size.Width / 2, offset * 3 - _buttonHighScores.Size.Height / 2);
             _buttonQuit.Position = new Vector2(cw - _buttonQuit.Size.Width / 2, offset * 4 - _buttonQuit.Size.Height / 2);
+
+            AddFadeIn();
         }
 
         protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
@@ -56,29 +58,25 @@ namespace Breakout.Game
             if (_buttonPlay.Bounds.Contains(e.Location))
             {
                 _transitioning = true;
-                Manager.AddScreen(new FadeOut(Manager, () =>
+                AddFadeOut(() =>
                 {
-                    Manager.RemoveScreen(this);
-                    Manager.AddScreen<BreakoutScreen>();
-                }));
+                    RemoveScreen(this);
+                    AddScreen<BreakoutScreen>();
+                });
             }
             else if (_buttonHighScores.Bounds.Contains(e.Location))
             {
                 _transitioning = true;
-                AddScreen(new FadeOut(Manager, () =>
+                AddFadeOut(() =>
                 {
                     RemoveScreen(this);
                     AddScreen<HighScoreScreen>();
-                    AddScreen<FadeIn>();
-                }));
+                });
             }
             else if (_buttonQuit.Bounds.Contains(e.Location))
             {
                 _transitioning = true;
-                AddScreen(new FadeOut(Manager, () =>
-                {
-                    Ui.Close();
-                }));
+                AddFadeOut(Ui.Close);
             }
         }
 
@@ -94,14 +92,14 @@ namespace Breakout.Game
         {
             base.OnDraw(g);
 
-            g.DrawString("BREAKOUT", _titleFont, Brushes.Magenta,
+            g.DrawStringAligned("BREAKOUT", _titleFont, Brushes.Magenta,
                 _titlePosition,
-                StringFormats.TopCenter
+                ContentAlignment.TopCenter
             );
 
-            g.DrawString("BREAKOUT", _titleFont, Brushes.Yellow,
+            g.DrawStringAligned("BREAKOUT", _titleFont, Brushes.Yellow,
                 new PointF(_titlePosition.X - 4, _titlePosition.Y - 4),
-                StringFormats.TopCenter
+                ContentAlignment.TopCenter
             );
 
             _buttonPlay.Draw(g);

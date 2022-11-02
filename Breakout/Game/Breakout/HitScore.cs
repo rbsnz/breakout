@@ -9,36 +9,32 @@ namespace Breakout.Game
     /// <summary>
     /// A text that floats indicating the score obtained when a brick is hit.
     /// </summary>
-    public class HitScore : IGameObject
+    public class HitScore : IDrawable
     {
-        private readonly Font _font;
-        private Brush _brush;
+        private readonly Text _text;
         private float _alpha;
 
         public Vector2 Position { get; }
-        public RectangleF Bounds => RectangleF.Empty;
-        public string Text { get; }
         public float Scale { get; set; }
         public float Alpha
         {
             get => _alpha;
             set
             {
-                _alpha = (float)Math.Max(0, Math.Min(1, value));
-                _brush = new SolidBrush(Color.FromArgb((int)(255 * Alpha), Color));
+                _alpha = Math.Max(0, Math.Min(1, value));
+                _text.Color = Color.FromArgb((int)(255 * Alpha), _text.Color);
             }
         }
-        public Color Color { get; }
 
-        public bool IsDead => throw new NotImplementedException();
-
-        public HitScore(FontManager fontManager, Vector2 position, string text, Color color)
+        public HitScore(GameManager manager, Vector2 position, string text, Color color)
         {
-            _font = fontManager.GetFont(Theme.FontFamily, 20.0f);
+            _text = new Text(manager, manager.Font.GetFont(Theme.FontFamily, 20.0f))
+            {
+                Value = text,
+                Color = color
+            };
 
             Position = position;
-            Text = text;
-            Color = color;
             Scale = 1.0f;
             Alpha = 1.0f;
         }
@@ -54,7 +50,7 @@ namespace Breakout.Game
         {
             g.TranslateTransform(Position.X, Position.Y);
             g.ScaleTransform(Scale, Scale);
-            g.DrawString(Text, _font, _brush, PointF.Empty, StringFormats.Center);
+            _text.Draw(g);
             g.ResetTransform();
         }
     }

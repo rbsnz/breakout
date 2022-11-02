@@ -11,6 +11,10 @@ namespace Breakout.Game
 {
     public class BreakoutScreen : GameScreen
     {
+        private bool _transitioning;
+
+        private bool _isMouseCaptured;
+
         // UI
         private readonly PauseScreen _pauseScreen;
         private readonly ScoreOverlay _scoreOverlay;
@@ -93,7 +97,7 @@ namespace Breakout.Game
             // Load sounds
             _hitSound = Sound.Load(@"res\sound\tone1.wav");
 
-            _scoreOverlay = new ScoreOverlay(Font, Ui, _paddle);
+            _scoreOverlay = new ScoreOverlay(Manager, _paddle);
         }
 
         private void OnUiDeactivated(object sender, EventArgs e)
@@ -104,11 +108,11 @@ namespace Breakout.Game
 
         protected override void OnAdd()
         {
-            Cursor.Hide();
-
             Ui.Deactivate += OnUiDeactivated;
-            Manager.AddScreen(_pauseScreen);
-            Manager.AddScreen<FadeIn>(x => x.OnComplete = () => { _frozen = false; });
+            AddScreen(_pauseScreen);
+            AddFadeIn(() => _frozen = false);
+
+            CaptureMouse();
         }
 
         protected override void OnRemove()
@@ -179,7 +183,7 @@ namespace Breakout.Game
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (!_alive) return;
+            if (!_alive || _transitioning) return;
 
             switch (e.KeyCode)
             {
@@ -210,20 +214,47 @@ namespace Breakout.Game
                     break;
                 case Keys.Q:
                     {
-                        Manager.RemoveScreen(this);
+                        if (!IsPaused) return;
+
+                        _transitioning = true;
+                        _frozen = true;
+
+                        ReleaseMouse();
+                        AddFadeOut(() =>
+                        {
+                            RemoveScreen(this);
+                            AddScreen<TitleScreen>();
+                        });
                     }
                     break;
             }
         }
         #endregion
 
+        private void CaptureMouse()
+        {
+            if (_isMouseCaptured) return;
+            _isMouseCaptured = true;
+
+            Cursor.Hide();
+            Cursor.Clip = Ui.RectangleToScreen(Ui.ClientRectangle);
+        }
+
+        private void ReleaseMouse()
+        {
+            if (!_isMouseCaptured) return;
+            _isMouseCaptured = false;
+
+            Cursor.Clip = Rectangle.Empty;
+            Cursor.Show();
+        }
+
         private void Pause()
         {
             if (IsPaused) return;
 
             IsPaused = true;
-            Cursor.Clip = Rectangle.Empty;
-            Cursor.Show();
+            ReleaseMouse();
         }
 
         private void Unpause()
@@ -231,8 +262,7 @@ namespace Breakout.Game
             if (!IsPaused) return;
 
             IsPaused = false;
-            Cursor.Hide();
-            Cursor.Clip = Ui.RectangleToScreen(Ui.ClientRectangle);
+            CaptureMouse();
             Cursor.Position = Ui.PointToScreen(new Point((int)_paddle.Position.X, (int)Ui.ClientSize.Height / 2));
         }
 
@@ -347,7 +377,7 @@ namespace Breakout.Game
             Score += additionalScore;
 
             _hitScores.Add(new HitScore(
-                Font,
+                Manager,
                 brick.Position + brick.Size / 2,
                 $"{additionalScore}",
                 Theme.FirmnessColors[brick.Firmness + 1]
@@ -379,8 +409,8 @@ namespace Breakout.Game
                 if (_ball.Position.Y > (Ui.ClientSize.Height + 100))
                 {
                     _alive = false;
-                    Cursor.Show();
-                    Manager.AddScreen(new GameOverScreen(Manager));
+                    ReleaseMouse();
+                    AddScreen<GameOverScreen>();
                 }
             }
 

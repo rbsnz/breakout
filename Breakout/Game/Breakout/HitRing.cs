@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace Breakout.Game
 {
-    public class HitRing : IGameObject
+    public class HitRing : IDrawable
     {
         private float _opacity;
         private Pen _pen;
@@ -34,9 +34,9 @@ namespace Breakout.Game
 
         public bool Update()
         {
-            Scale *= 1.03f;
-            Scale *= 1.03f;
-            Alpha = 1.0f - Scale / 5;
+            Scale *= 1.05f;
+            Scale *= 1.05f;
+            Alpha = 1.0f - Scale / 8;
             return Alpha > 0;
         }
 

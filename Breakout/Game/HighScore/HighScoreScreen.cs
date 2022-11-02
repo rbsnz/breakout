@@ -1,4 +1,6 @@
 ﻿
+using Breakout.Data;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 
@@ -14,6 +16,8 @@ namespace Breakout.Game
 
         private bool _transitioning;
 
+        private readonly List<HighScore> _highScores;
+
         public HighScoreScreen(GameManager manager)
             : base(manager)
         {
@@ -26,7 +30,13 @@ namespace Breakout.Game
                 Ui.ClientSize.Width / 2 - _backButton.Size.Width / 2,
                 Ui.ClientSize.Height - 20 - _backButton.Size.Height
             );
+
+            _highScores = manager.Scores.Load();
+
+
         }
+
+        protected override void OnAdd() => AddFadeIn();
 
         protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
         {
@@ -42,12 +52,11 @@ namespace Breakout.Game
             if (_backButton.Bounds.Contains(e.Location))
             {
                 _transitioning = true;
-                Manager.AddScreen(new FadeOut(Manager, () =>
+                AddFadeOut(() =>
                 {
-                    Manager.RemoveScreen(this);
-                    Manager.AddScreen(new TitleScreen(Manager));
-                    Manager.AddScreen(new FadeIn(Manager));
-                }));
+                    RemoveScreen(this);
+                    AddScreen<TitleScreen>();
+                });
             }
         }
 
@@ -60,7 +69,7 @@ namespace Breakout.Game
 
         protected override void OnDraw(Graphics g)
         {
-            g.DrawString("HIGH SCORES", _titleFont, Brushes.Yellow, new PointF(Ui.ClientSize.Width / 2, 20), StringFormats.TopCenter);
+            g.DrawStringAligned("HIGH SCORES", _titleFont, Brushes.Yellow, new PointF(Ui.ClientSize.Width / 2, 20), ContentAlignment.TopCenter);
 
             _backButton.Draw(g);
         }

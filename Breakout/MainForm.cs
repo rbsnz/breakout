@@ -34,8 +34,7 @@ namespace Breakout
         private void OnLoad(object sender, EventArgs e)
         {
             _manager.Initialize();
-            _manager.AddScreen(new TitleScreen(_manager));
-            _manager.AddScreen(new FadeIn(_manager));
+            _manager.AddScreen<TitleScreen>();
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e) => _manager.HandleMouseMove(e);

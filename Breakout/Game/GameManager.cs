@@ -20,6 +20,7 @@ namespace Breakout.Game
         public IUiManager Ui { get; }
         public FontManager Font { get; }
         public ISoundManager Sound { get; }
+        public HighScoreManager Scores { get; }
 
         public GameManager(IUiManager uiManager, ISoundManager soundManager)
         {
@@ -31,6 +32,8 @@ namespace Breakout.Game
                 (Theme.BrickColumns * Theme.BrickWidth + 2) * Theme.BrickUnit,
                 (Theme.BrickRows + 22) * Theme.BrickUnit
             );
+
+            Scores = new HighScoreManager();
         }
 
         // Screen management
@@ -68,7 +71,7 @@ namespace Breakout.Game
         public T AddScreen<T>() where T : GameScreen => AddScreen<T>(null);
 
         public void AddFadeIn(Action onComplete = null) => AddScreen<FadeIn>(x => x.OnComplete = onComplete);
-        public void AddFadeOut(Action onComplete = null) => AddFadeOut<FadeOut>(x => x.OnComplete = onComplete);
+        public void AddFadeOut(Action onComplete = null) => AddScreen<FadeOut>(x => x.OnComplete = onComplete);
 
         public T GetScreen<T>() where T : GameScreen => _screens.OfType<T>().FirstOrDefault();
 

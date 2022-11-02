@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 
@@ -6,6 +7,26 @@ namespace Breakout
 {
     static class DrawingExtensions
     {
+        // Cache string formats for each alignment.
+        private static readonly Dictionary<ContentAlignment, StringFormat> _formatAlignments = new Dictionary<ContentAlignment, StringFormat>()
+        {
+            [ContentAlignment.TopLeft] = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near },
+            [ContentAlignment.TopCenter] = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near },
+            [ContentAlignment.TopRight] = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near },
+            [ContentAlignment.MiddleLeft] = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center },
+            [ContentAlignment.MiddleCenter] = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center },
+            [ContentAlignment.MiddleRight] = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center },
+            [ContentAlignment.BottomLeft] = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Far },
+            [ContentAlignment.BottomCenter] = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Far },
+            [ContentAlignment.BottomRight] = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Far }
+        };
+
+        /// <summary>
+        /// Draws a string with the specified alignment.
+        /// </summary>
+        public static void DrawStringAligned(this Graphics g, string s, Font font, Brush brush, PointF point, ContentAlignment alignment)
+            => g.DrawString(s, font, brush, point, _formatAlignments[alignment]);
+
         /// <summary>
         /// Draws a rectangle specified by a <see cref="RectangleF"/> structure.
         /// </summary>

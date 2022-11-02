@@ -97,13 +97,14 @@
     <Compile Include="Game\Breakout\BreakoutScreen.cs" />
     <Compile Include="Game\Breakout\Brick.cs" />
     <Compile Include="Game\Button.cs" />
+    <Compile Include="Game\Dimmer.cs" />
     <Compile Include="Game\FadeIn.cs" />
     <Compile Include="Game\FadeOut.cs" />
     <Compile Include="Game\Breakout\GameOverScreen.cs" />
     <Compile Include="Game\GameScreen.cs" />
     <Compile Include="Data\HighScoreManager.cs" />
     <Compile Include="Game\HighScore\HighScoreScreen.cs" />
-    <Compile Include="Game\IGameObject.cs" />
+    <Compile Include="Game\Text.cs" />
     <Compile Include="Game\Title\TitleScreen.cs" />
     <Compile Include="Game\Breakout\HitRing.cs" />
     <Compile Include="Game\Breakout\PauseScreen.cs" />
@@ -126,7 +127,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Audio\SoundManager.cs" />
-    <Compile Include="Utility\StringFormats.cs" />
     <Compile Include="Game\Theme.cs" />
     <Compile Include="Game\Breakout\HitScore.cs" />
     <EmbeddedResource Include="MainForm.resx">

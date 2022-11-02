@@ -24,7 +24,9 @@ namespace Breakout.Game
         public ISoundManager Sound => Manager.Sound;
 
         protected void AddScreen(GameScreen screen) => Manager.AddScreen(screen);
-        protected void AddScreen<T>() where T : GameScreen => Manager.AddScreen<T>();
+        protected void AddScreen<T>(Action<T> configure = null) where T : GameScreen => Manager.AddScreen<T>();
+        protected void AddFadeIn(Action onComplete = null) => Manager.AddFadeIn(onComplete);
+        protected void AddFadeOut(Action onComplete = null) => Manager.AddFadeOut(onComplete);
         protected bool RemoveScreen(GameScreen screen) => Manager.RemoveScreen(screen);
         protected bool RemoveScreen<T>() where T : GameScreen => Manager.RemoveScreen<T>();
 
