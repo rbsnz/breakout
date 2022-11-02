@@ -1,7 +1,8 @@
-﻿using Breakout.Data;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
+
+using Breakout.Data;
 
 namespace Breakout.Game
 {
@@ -14,11 +15,12 @@ namespace Breakout.Game
         private readonly Text _gameOverText;
         private readonly Text _nameText;
 
+        private readonly bool _isHighScore;
+
         private bool _transitioning;
 
         private string _name = "";
 
-        private bool _isHighScore;
 
         public GameOverScreen(GameManager manager, int score)
             : base(manager)
@@ -118,7 +120,8 @@ namespace Breakout.Game
         {
             _dimmer.Draw(g);
             _gameOverText.Draw(g);
-            _nameText.Draw(g);
+            if (_isHighScore)
+                _nameText.Draw(g);
         }
     }
 }
