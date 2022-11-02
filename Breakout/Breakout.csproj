@@ -165,12 +165,6 @@
     <Content Include="res\font\OFL.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\sound\sfx_sounds_Blip1.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\sound\sfx_sound_neutral5.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="res\sound\tone1.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
