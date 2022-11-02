@@ -14,26 +14,10 @@ namespace Breakout.Tests
         {
             Ball ball = new Ball(Vector2.Zero);
 
-            // The ball should move by the specified amount.
             ball.Move(new Vector2(5, 10));
-            Assert.AreEqual(new Vector2(5, 10), ball.Position);
+            Assert.AreEqual(new Vector2(5, 10), ball.Position, "The ball should move by the specified amount.");
 
-            // The ball should move relative to its current position.
-            ball.Move(new Vector2(5, -15));
-            Assert.AreEqual(new Vector2(10, -5), ball.Position);
-        }
-
-        [TestMethod]
-        public void TestBounce()
-        {
-            Ball ball = new Ball()
-            {
-                Velocity = new Vector2(10, 5)
-            };
-
-            ball.Bounce(new Vector2(0, -1));
-
-            Assert.AreEqual(new Vector2(10, -5), ball.Velocity);
+            Assert.AreEqual(new Vector2(10, -5), ball.Position, "The ball should move relative to its current position.");
         }
     }
 }
