@@ -57,7 +57,8 @@ namespace Breakout.Data
         }
 
         /// <inheritdoc/>
-        public bool IsHighScore(int value) => (_scores.Count < MaxScores) || (value > _scores.Min(x => x.Value));
+        public bool IsHighScore(int value)
+            => value > 0 && (_scores.Count < MaxScores || value > _scores.Min(x => x.Value));
 
         /// <summary>
         /// Loads the high scores.
