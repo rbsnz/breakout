@@ -8,19 +8,26 @@ namespace Breakout.Game
     {
         // Defines the grid unit size.
         public const int GridUnit = 5;
+
         // Defines the brick unit size.
         public const int BrickUnit = GridUnit * 5;
+
         // Defines the standard size of a brick in brick units.
         public const int BrickWidth = 4, BrickHeight = 1;
 
-        public const int BrickColumns = 10, BrickRows = 2 * 4;
+        // Defines the number of columns and rows of bricks.
+        public const int BrickColumns = 10, BrickRows = 8;
 
+        // Defines the brick firmness colors from 0-4, where 0 is none.
         public static readonly IReadOnlyList<Color> FirmnessColors = new[] { Color.White, Color.Cyan, Color.Lime, Color.Yellow, Color.Red };
 
         public static readonly IReadOnlyList<Pen> FirmnessPens = FirmnessColors.Select(color => new Pen(color, 2.0f)).ToArray();
 
         public static readonly IReadOnlyList<Brush> FirmnessBrushes = FirmnessColors.Select(color => new SolidBrush(Color.FromArgb(100, color))).ToArray();
 
+        /// <summary>
+        /// Defines the font family name for the theme.
+        /// </summary>
         public static readonly string FontFamily = "Press Start 2P";
     }
 }
