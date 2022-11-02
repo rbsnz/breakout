@@ -67,7 +67,7 @@ namespace Breakout.Tests
             Assert.AreEqual(HighScores.MaxScores, HighScores.Count, "The high score list should be full.");
             Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 500, "d")), "The score should be added as it qualifies as a high score.");
             Assert.AreEqual(HighScores.MaxScores, HighScores.Count, "The the size of the high score list should remain the same.");
-            Assert.IsFalse(HighScores.Any(x => x.Score == 100), "The lowest score should be removed.");
+            Assert.IsFalse(HighScores.Any(x => x.Value == 100), "The lowest score should be removed.");
         }
 
         /// <summary>

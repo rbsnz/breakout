@@ -1,18 +1,20 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
 
 using Breakout.Audio;
-using Breakout.Game;
 
 namespace Breakout.Game
 {
+    /// <summary>
+    /// Handles all logic for the breakout game.
+    /// </summary>
     public class BreakoutScreen : GameScreen
     {
         private bool _transitioning;
-
         private bool _isMouseCaptured;
 
         // UI
@@ -41,24 +43,32 @@ namespace Breakout.Game
         private bool _debug, _isDraggingBall, _isSettingBallVelocity;
         private Vector2 _dragOffset;
 
+        /// <summary>
+        /// Gets or sets whether the game is paused.
+        /// </summary>
         public bool IsPaused
         {
             get => _pauseScreen.IsPaused;
             set => _pauseScreen.IsPaused = value;
         }
 
+        /// <summary>
+        /// Gets or sets the score.
+        /// </summary>
         public int Score
         {
             get => _scoreOverlay.Value;
             set => _scoreOverlay.Value = value;
         }
 
+        /// <summary>
+        /// Constructs a new breakout screen.
+        /// </summary>
         public BreakoutScreen(GameManager manager)
             : base(manager)
         {
-            _pauseScreen = new PauseScreen(manager);
 
-            // Initialize paddle, ball
+            // Initialize the paddle & ball.
             _paddle = new Paddle()
             {
                 Position = new Vector2(Ui.ClientSize.Width / 2, Ui.ClientSize.Height - Theme.BrickUnit),
@@ -72,40 +82,31 @@ namespace Breakout.Game
                 Velocity = Vector2.Normalize(new Vector2(1.0f, 1.0f)) * 10.0f
             };
 
-            // Initialize bricks
+            // Initialize the bricks.
             _bricks = new List<Brick>();
             Vector2 brickSize = new Vector2(Theme.BrickUnit * 4, Theme.BrickUnit);
 
-            int bricksWidth = Theme.BrickColumns * (int)brickSize.X;
             int padding = Theme.BrickUnit * 1;
 
             for (int row = 0; row < Theme.BrickRows; row++)
             {
                 for (int col = 0; col < Theme.BrickColumns; col++)
                 {
-                    _bricks.Add(new Brick(
-                        new Vector2(
-                            padding + brickSize.X * col,
-                            padding + brickSize.Y * row
-                        ),
-                        brickSize
-                    )
-                    { Firmness = 4 - row / 2 });
+                    // Add a brick and set the firmness based on its row.
+                    Vector2 brickPos = new Vector2(padding + brickSize.X * col, padding + brickSize.Y * row);
+                    _bricks.Add(new Brick(brickPos, brickSize) { Firmness = 4 - row / 2 });
                 }
             }
 
-            // Load sounds
+            // Load sounds.
             _hitSound = Sound.Load(@"res\sound\tone1.wav");
 
+            // Initialize the score and pause overlays.
             _scoreOverlay = new ScoreOverlay(Manager, _paddle);
+            _pauseScreen = new PauseScreen(manager);
         }
 
-        private void OnUiDeactivated(object sender, EventArgs e)
-        {
-            if (_alive)
-                Pause();
-        }
-
+        // Initializes the screen when it is added.
         protected override void OnAdd()
         {
             Ui.Deactivate += OnUiDeactivated;
@@ -115,10 +116,17 @@ namespace Breakout.Game
             CaptureMouse();
         }
 
+        // Cleans up resources when the screen is removed.
         protected override void OnRemove()
         {
             Ui.Deactivate -= OnUiDeactivated;
             RemoveScreen(_pauseScreen);
+        }
+
+        // Pauses the game when the window loses focus.
+        private void OnUiDeactivated(object sender, EventArgs e)
+        {
+            if (_alive && !_debug) Pause();
         }
 
         #region Input
@@ -126,7 +134,7 @@ namespace Breakout.Game
         {
             Vector2 mousePos = e.Location.ToVector2();
 
-            if (_debug && IsPaused)
+            if (_debug)
             {
                 if (Vector2.Distance(mousePos, _ball.Position) <= _ball.Radius)
                 {
@@ -189,31 +197,42 @@ namespace Breakout.Game
             {
                 case Keys.P:
                     {
-                        if (IsPaused) Unpause();
-                        else Pause();
+                        // Pause/unpause the game, unless debug mode is on.
+                        if (_debug) return;
+
+                        if (IsPaused)
+                            Unpause();
+                        else
+                            Pause();
                     }
                     break;
                 case Keys.D:
                     {
+                        // Enable/disable debug mode when Ctrl+D is pressed, unless paused or frozen.
+                        if (!e.Control || IsPaused || _frozen) return;
+
                         _debug = !_debug;
+                        if (_debug) ReleaseMouse();
+                        else CaptureMouse();
                     }
                     break;
                 case Keys.N:
                     {
-                        if (!_debug || !IsPaused) return;
-                        IsPaused = false;
-                        Update();
-                        IsPaused = true;
+                        // Execute a ball update step when N is pressed and debug mode is activated.
+                        if (!_debug) return;
+                        UpdateBall();
                     }
                     break;
                 case Keys.R:
                     {
+                        // Reset the ball position when R is pressed and debug mode is activated.
                         if (!_debug) return;
                         _ball.Position = new Vector2(Ui.ClientSize.Width, Ui.ClientSize.Height) / 2;
                     }
                     break;
                 case Keys.Q:
                     {
+                        // Move back to the main menu when Q is pressed while paused.
                         if (!IsPaused) return;
 
                         _transitioning = true;
@@ -239,6 +258,9 @@ namespace Breakout.Game
             if (_isMouseCaptured) return;
             _isMouseCaptured = true;
 
+            // Move the mouse back to the paddle position to prevent it from teleporting when unpausing.
+            Cursor.Position = Ui.PointToScreen(new Point((int)_paddle.Position.X, Ui.ClientSize.Height / 2));
+
             Cursor.Clip = Ui.RectangleToScreen(Ui.ClientRectangle);
             Cursor.Hide();
         }
@@ -262,8 +284,8 @@ namespace Breakout.Game
         {
             if (IsPaused) return;
 
-            IsPaused = true;
             ReleaseMouse();
+            IsPaused = true;
         }
 
         /// <summary>
@@ -273,22 +295,36 @@ namespace Breakout.Game
         {
             if (!IsPaused) return;
 
-            IsPaused = false;
             CaptureMouse();
-
-            // Move the mouse back to the paddle position to prevent it from teleporting when unpausing.
-            Cursor.Position = Ui.PointToScreen(new Point((int)_paddle.Position.X, (int)Ui.ClientSize.Height / 2));
+            IsPaused = false;
         }
 
+        /// <summary>
+        /// Ends the game.
+        /// </summary>
         private void EndGame()
         {
             if (!_alive) return;
             _alive = false;
 
+            // Release the mouse capture.
             ReleaseMouse();
 
             // Add the game over screen providing the score and whether the game was won (there are no more bricks).
             AddScreen(new GameOverScreen(Manager, _scoreOverlay.Value, _bricks.Count == 0));
+        }
+
+        private void UpdateBall()
+        {
+            // Move the ball by its velocity.
+            Vector2 v = _ball.Velocity;
+            MoveBall(_ball, ref v);
+
+            // End the game if the ball falls below the game area.
+            if (_ball.Position.Y > (Ui.ClientSize.Height + 100))
+            {
+                EndGame();
+            }
         }
 
         /// <summary>
@@ -377,6 +413,7 @@ namespace Breakout.Game
 
                 // Determine if the brick was hit on the sides or the top/bottom
                 // by checking if the total intersection area is wider or taller.
+                // Then negate the X or Y velocity depending on which side was hit.
                 if (totalIntersection.Width > totalIntersection.Height)
                 {
                     ball.Velocity *= new Vector2(1, -1);
@@ -447,7 +484,8 @@ namespace Breakout.Game
         {
             if (IsPaused) return;
 
-            // Update visual elements (hit scores & hit rings).
+            // Update visual elements (hit scores, hit rings, score overlay).
+
             for (int i = 0; i < _hitScores.Count; i++)
                 if (!_hitScores[i].Update())
                     _hitScores.RemoveAt(i--);
@@ -458,19 +496,13 @@ namespace Breakout.Game
 
             _scoreOverlay.Update();
 
-            if (!_alive) return;
+            // Don't update if we are dead or debugging.
+            if (!_alive || _debug) return;
 
+            // Update the ball if it is not frozen.
             if (!_frozen)
             {
-                // Move the ball by its velocity.
-                Vector2 v = _ball.Velocity;
-                MoveBall(_ball, ref v);
-
-                // End the game if the ball falls below the game area.
-                if (_ball.Position.Y > (Ui.ClientSize.Height + 100))
-                {
-                    EndGame();
-                }
+                UpdateBall();
             }
 
             _paddle.Update();

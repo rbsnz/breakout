@@ -10,7 +10,7 @@ using Breakout.Services;
 namespace Breakout.Game
 {
     /// <summary>
-    /// Manages the game. Provides input to, updates and displays game screens.
+    /// Manages the game. Provides input to, updates, and displays game screens.
     /// </summary>
     public class GameManager : IDrawable
     {

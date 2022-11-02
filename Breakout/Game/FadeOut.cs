@@ -3,12 +3,21 @@ using System.Drawing;
 
 namespace Breakout.Game
 {
+    /// <summary>
+    /// Represents a fade out effect that may invoke an action once completed.
+    /// </summary>
     public class FadeOut : GameScreen
     {
         private readonly Dimmer _dimmer;
 
+        /// <summary>
+        /// Gets or sets the action to invoke upon fade completion.
+        /// </summary>
         public Action OnComplete { get; set; }
 
+        /// <summary>
+        /// Constructs a new fade in effect.
+        /// </summary>
         public FadeOut(GameManager manager)
             : base(manager)
         {

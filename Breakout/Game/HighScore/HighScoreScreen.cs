@@ -68,7 +68,7 @@ namespace Breakout.Game
                 var scoreTexts = new List<Text>(
                     HighScores.Select(x => new Text(Manager, _textFont)
                     {
-                        Value = $"{x.Score}",
+                        Value = $"{x.Value}",
                         Color = Color.Cyan,
                         Alignment = ContentAlignment.TopLeft
                     })

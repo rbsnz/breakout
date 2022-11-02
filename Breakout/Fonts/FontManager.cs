@@ -8,6 +8,7 @@ using Breakout.Services;
 
 namespace Breakout.Fonts
 {
+    /// <inheritdoc cref="IFontManager"/>
     public class FontManager : IFontManager
     {
         private readonly PrivateFontCollection _pfc;

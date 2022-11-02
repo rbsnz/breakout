@@ -6,6 +6,10 @@ using Breakout.Data;
 
 namespace Breakout.Game
 {
+    /// <summary>
+    /// Displays the game over text and allows the player to
+    /// enter their name if they achieved a high score.
+    /// </summary>
     public class GameOverScreen : GameScreen
     {
         private readonly int _score;
@@ -16,19 +20,20 @@ namespace Breakout.Game
         private readonly Text _nameText;
 
         private readonly bool _isHighScore;
-        private readonly bool _won;
 
         private bool _transitioning;
 
         private string _name = "";
 
+        /// <summary>
+        /// Constructs a new game over screen
+        /// </summary>
         public GameOverScreen(GameManager manager, int score, bool won)
             : base(manager)
         {
             _font = Font.GetFont(Theme.FontFamily, 20.0f);
             _dimmer = new Dimmer();
             _score = score;
-            _won = won;
 
             _isHighScore = manager.HighScores.IsHighScore(_score);
 
@@ -67,16 +72,18 @@ namespace Breakout.Game
 
             if (!_isHighScore)
             {
+                // Move back to the title screen if the player did not achieve a high score.
                 _transitioning = true;
                 AddFadeOut(() =>
                 {
                     RemoveScreen<BreakoutScreen>();
                     RemoveScreen(this);
-                    AddScreen<HighScoreScreen>();
+                    AddScreen<TitleScreen>();
                 });
                 return;
             }
 
+            // Allow the user to enter the keys A-Z, 0-9.
             if ((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z) ||
                 (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9))
             {
@@ -87,6 +94,7 @@ namespace Breakout.Game
                 }
             }
 
+            // Allow the user to delete characters.
             if (e.KeyCode == Keys.Back)
             {
                 if (_name.Length > 0)
@@ -96,19 +104,19 @@ namespace Breakout.Game
                 }
             }
 
-            if (e.KeyCode == Keys.Return)
+            // Add the high score and transition to the high score screen
+            // once the user accepts their name.
+            if (e.KeyCode == Keys.Return &&
+                !string.IsNullOrWhiteSpace(_name))
             {
-                if (!string.IsNullOrWhiteSpace(_name))
+                _transitioning = true;
+                Manager.HighScores.Add(new HighScore(_score, _name));
+                AddFadeOut(() =>
                 {
-                    _transitioning = true;
-                    Manager.HighScores.Add(new HighScore(_score, _name));
-                    AddFadeOut(() =>
-                    {
-                        RemoveScreen<BreakoutScreen>();
-                        RemoveScreen(this);
-                        AddScreen<HighScoreScreen>();
-                    });
-                }
+                    RemoveScreen<BreakoutScreen>();
+                    RemoveScreen(this);
+                    AddScreen<HighScoreScreen>();
+                });
             }
         }
 

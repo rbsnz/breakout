@@ -4,6 +4,9 @@ using Breakout.Audio;
 
 namespace Breakout.Services
 {
+    /// <summary>
+    /// Represents an audio engine that can load and play sounds.
+    /// </summary>
     public interface ISoundManager
     {
         /// <summary>

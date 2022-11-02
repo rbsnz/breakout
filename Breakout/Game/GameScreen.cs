@@ -9,10 +9,8 @@ namespace Breakout.Game
     /// <summary>
     /// Represents a game screen that may receive input, update, and draw to the screen.
     /// </summary>
-    public abstract class GameScreen : IDisposable
+    public abstract class GameScreen
     {
-        protected bool _disposed;
-
         // Store a reference to the game manager.
         public GameManager Manager { get; }
 
@@ -33,6 +31,8 @@ namespace Breakout.Game
         {
             Manager = manager;
         }
+
+        // Define events with protected virtual methods that may be overridden by subclasses.
 
         internal void HandleAdd() => OnAdd();
         protected virtual void OnAdd() { }
@@ -59,18 +59,5 @@ namespace Breakout.Game
 
         public void Draw(Graphics g) => OnDraw(g);
         protected virtual void OnDraw(Graphics g) { }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-            _disposed = true;
-
-            if (disposing)
-            {
-                OnRemove();
-            }
-        }
-
-        public void Dispose() => Dispose(true);
     }
 }

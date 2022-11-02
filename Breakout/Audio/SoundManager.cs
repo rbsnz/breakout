@@ -11,6 +11,7 @@ using Breakout.Services;
 
 namespace Breakout
 {
+    /// <inheritdoc cref="ISoundManager"/>
     public class SoundManager : ISoundManager
     {
         private readonly IWavePlayer _output;

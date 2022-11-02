@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
 using System.Numerics;
 
-using Breakout.Fonts;
-
 namespace Breakout.Game
 {
+    /// <summary>
+    /// Displays the current score to the screen, avoiding drawing text over the paddle.
+    /// </summary>
     public class ScoreOverlay : IDrawable
     {
         private readonly GameManager _manager;
@@ -14,6 +15,10 @@ namespace Breakout.Game
         private readonly Text _text;
 
         private int _value;
+
+        /// <summary>
+        /// Gets or sets the score value.
+        /// </summary>
         public int Value
         {
             get => _value;
@@ -24,6 +29,9 @@ namespace Breakout.Game
             }
         }
 
+        /// <summary>
+        /// Constructs a new score overlay.
+        /// </summary>
         public ScoreOverlay(GameManager manager, Paddle paddle)
         {
             _manager = manager;
@@ -37,18 +45,28 @@ namespace Breakout.Game
             PositionLeft();
         }
 
+        /// <summary>
+        /// Positions the text to the left side of the screen.
+        /// </summary>
         private void PositionLeft()
         {
             _text.Position = new Vector2(10, _manager.Ui.ClientSize.Height - 10);
             _text.Alignment = ContentAlignment.BottomLeft;
         }
 
+        /// <summary>
+        /// Positions the text to the right side of the screen.
+        /// </summary>
         private void PositionRight()
         {
             _text.Position = new Vector2(_manager.Ui.ClientSize.Width - 10, _manager.Ui.ClientSize.Height - 10);
             _text.Alignment = ContentAlignment.BottomRight;
         }
 
+        /// <summary>
+        /// Updates the position of the text depending on the paddle position,
+        /// ensuring that the score text does not display over the paddle.
+        /// </summary>
         public void Update()
         {
             float
@@ -66,6 +84,9 @@ namespace Breakout.Game
             }
         }
 
+        /// <summary>
+        /// Draws the score to the screen.
+        /// </summary>
         public void Draw(Graphics g) => _text.Draw(g);
     }
 }

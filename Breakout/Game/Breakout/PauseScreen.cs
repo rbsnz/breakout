@@ -2,13 +2,18 @@
 
 namespace Breakout.Game
 {
+    /// <summary>
+    /// Displays text and dims the screen while the game is paused.
+    /// </summary>
     public class PauseScreen : GameScreen
     {
         private readonly Font _font;
-
         private readonly Dimmer _dimmer;
 
         private bool _isPaused;
+        /// <summary>
+        /// Gets or sets whether the game is paused.
+        /// </summary>
         public bool IsPaused
         {
             get => _isPaused;
@@ -20,6 +25,9 @@ namespace Breakout.Game
             }
         }
 
+        /// <summary>
+        /// Constructs a new pause screen.
+        /// </summary>
         public PauseScreen(GameManager manager)
             : base(manager)
         {
@@ -29,11 +37,13 @@ namespace Breakout.Game
 
         protected override void OnUpdate()
         {
+            // Update the dimmer.
             _dimmer.Update();
         }
 
         protected override void OnDraw(Graphics g)
         {
+            // Draw the dimmer and pause text while the game is paused.
             if (IsPaused)
             {
                 PointF textPos = new PointF(Ui.ClientSize.Width / 2, Ui.ClientSize.Height / 2);

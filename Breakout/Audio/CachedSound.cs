@@ -7,15 +7,28 @@ using NAudio.Wave;
 
 namespace Breakout.Audio
 {
+    /// <summary>
+    /// Represents a sound that is played from cached audio data.
+    /// </summary>
     public class CachedSound : ISound
     {
-        public float[] AudioData { get; private set; }
+        /// <summary>
+        /// Gets the wave format of this sound.
+        /// </summary>
         public WaveFormat WaveFormat { get; private set; }
+
+        /// <summary>
+        /// Gets the audio data of this sound.
+        /// </summary>
+        public float[] AudioData { get; private set; }
+
+        /// <summary>
+        /// Constructs a new cached sound, loading from the specified audio file.
+        /// </summary>
         public CachedSound(string audioFileName)
         {
             using (var audioFileReader = new AudioFileReader(audioFileName))
             {
-                // TODO: could add resampling in here if required
                 WaveFormat = audioFileReader.WaveFormat;
                 var wholeFile = new List<float>((int)(audioFileReader.Length / 4));
                 var readBuffer = new float[audioFileReader.WaveFormat.SampleRate * audioFileReader.WaveFormat.Channels];

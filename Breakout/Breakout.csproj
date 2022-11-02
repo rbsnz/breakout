@@ -120,10 +120,10 @@
     <Compile Include="Services\IHighScores.cs" />
     <Compile Include="Services\ISoundManager.cs" />
     <Compile Include="Fonts\FontManager.cs" />
+    <Compile Include="Utility\ConversionExtensions.cs" />
     <Compile Include="Utility\GraphicsExtensions.cs" />
     <Compile Include="Game\IDrawable.cs" />
     <Compile Include="Services\IUiManager.cs" />
-    <Compile Include="Utility\Line.cs" />
     <Compile Include="Utility\Maths.cs" />
     <Compile Include="Game\Breakout\Paddle.cs" />
     <Compile Include="Program.cs" />

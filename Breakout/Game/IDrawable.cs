@@ -7,6 +7,9 @@ namespace Breakout.Game
     /// </summary>
     public interface IDrawable
     {
+        /// <summary>
+        /// Draws this object to the specified render target.
+        /// </summary>
         void Draw(Graphics g);
     }
 }

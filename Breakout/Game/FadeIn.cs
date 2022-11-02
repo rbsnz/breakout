@@ -3,13 +3,22 @@ using System.Drawing;
 
 namespace Breakout.Game
 {
+    /// <summary>
+    /// Represents a fade in effect that may invoke an action once completed.
+    /// </summary>
     public class FadeIn : GameScreen
     {
         private readonly DateTime _created;
         private readonly Dimmer _dimmer;
 
+        /// <summary>
+        /// Gets or sets the action to invoke upon fade completion.
+        /// </summary>
         public Action OnComplete { get; set; }
 
+        /// <summary>
+        /// Constructs a new fade in effect.
+        /// </summary>
         public FadeIn(GameManager manager)
             : base(manager)
         {

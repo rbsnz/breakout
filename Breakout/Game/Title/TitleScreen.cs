@@ -4,15 +4,16 @@ using System.Numerics;
 
 namespace Breakout.Game
 {
+    /// <summary>
+    /// The title screen that allows the user to transition to the game screen, high score screen, or exit the game.
+    /// </summary>
     public class TitleScreen : GameScreen
     {
-        private Font _titleFont;
+        private readonly Font _titleFont;
+        private readonly Button _buttonPlay, _buttonHighScores, _buttonQuit;
+        private readonly Button[] _buttons;
 
-        private PointF _titlePosition;
-
-        private Button _buttonPlay, _buttonHighScores, _buttonQuit;
-
-        private Button[] _buttons;
+        private readonly Text _titleText, _titleTextShadow;
 
         private bool _transitioning;
 
@@ -20,6 +21,20 @@ namespace Breakout.Game
             : base(manager)
         {
             _titleFont = Font.GetFont(Theme.FontFamily, 36.0f);
+
+            _titleText = new Text(Manager, _titleFont)
+            {
+                Value = "BREAKOUT",
+                Color = Color.Yellow,
+                Alignment = ContentAlignment.TopCenter
+            };
+
+            _titleTextShadow = new Text(Manager, _titleFont)
+            {
+                Value = "BREAKOUT",
+                Color = Color.Magenta,
+                Alignment = ContentAlignment.TopCenter
+            };
 
             _buttonPlay = new Button(Manager, _titleFont, "Play");
             _buttonHighScores = new Button(Manager, _titleFont, "High Scores");
@@ -30,9 +45,12 @@ namespace Breakout.Game
 
         protected override void OnAdd()
         {
+            // Calculate title text & button positions.
             float cw = Ui.ClientSize.Width / 2.0f;
             float offset = Ui.ClientSize.Height / 5.0f;
-            _titlePosition = new PointF(cw, offset);
+
+            _titleText.Position = new Vector2(cw - 4, offset - 4);
+            _titleTextShadow.Position = new Vector2(cw, offset);
 
             _buttonPlay.Position = new Vector2(cw - _buttonPlay.Size.Width / 2, offset * 2 - _buttonPlay.Size.Height / 2);
             _buttonHighScores.Position = new Vector2(cw - _buttonHighScores.Size.Width / 2, offset * 3 - _buttonHighScores.Size.Height / 2);
@@ -92,15 +110,8 @@ namespace Breakout.Game
         {
             base.OnDraw(g);
 
-            g.DrawStringAligned("BREAKOUT", _titleFont, Brushes.Magenta,
-                _titlePosition,
-                ContentAlignment.TopCenter
-            );
-
-            g.DrawStringAligned("BREAKOUT", _titleFont, Brushes.Yellow,
-                new PointF(_titlePosition.X - 4, _titlePosition.Y - 4),
-                ContentAlignment.TopCenter
-            );
+            _titleTextShadow.Draw(g);
+            _titleText.Draw(g);
 
             _buttonPlay.Draw(g);
             _buttonHighScores.Draw(g);

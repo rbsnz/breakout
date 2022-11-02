@@ -8,7 +8,7 @@ using Breakout.Services;
 
 namespace Breakout.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IHighScores"/>
     public class HighScores : IHighScores
     {
         private readonly List<HighScore> _scores = new List<HighScore>();
@@ -57,7 +57,7 @@ namespace Breakout.Data
         }
 
         /// <inheritdoc/>
-        public bool IsHighScore(int value) => (_scores.Count < MaxScores) || (value > _scores.Min(x => x.Score));
+        public bool IsHighScore(int value) => (_scores.Count < MaxScores) || (value > _scores.Min(x => x.Value));
 
         /// <summary>
         /// Loads the high scores.
@@ -107,7 +107,7 @@ namespace Breakout.Data
                 foreach (var highScore in _scores)
                 {
                     writer.Write(highScore.Date.ToBinary());
-                    writer.Write(highScore.Score);
+                    writer.Write(highScore.Value);
                     writer.Write(highScore.Name);
                 }
             }
@@ -116,7 +116,7 @@ namespace Breakout.Data
         /// <inheritdoc/>
         public bool Add(HighScore highScore)
         {
-            if (!IsHighScore(highScore.Score))
+            if (!IsHighScore(highScore.Value))
                 return false;
 
             _scores.Add(highScore);
