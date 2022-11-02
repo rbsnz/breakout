@@ -17,7 +17,8 @@ namespace Breakout.Tests
             ball.Move(new Vector2(5, 10));
             Assert.AreEqual(new Vector2(5, 10), ball.Position, "The ball should move by the specified amount.");
 
-            Assert.AreEqual(new Vector2(10, -5), ball.Position, "The ball should move relative to its current position.");
+            ball.Move(new Vector2(5, -5));
+            Assert.AreEqual(new Vector2(10, 5), ball.Position, "The ball should move relative to its current position.");
         }
     }
 }
