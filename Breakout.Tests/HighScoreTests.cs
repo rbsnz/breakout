@@ -1,12 +1,10 @@
-﻿using Breakout.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Breakout.Data;
 
 namespace Breakout.Tests
 {
@@ -135,10 +133,10 @@ namespace Breakout.Tests
             Assert.AreEqual(HighScores.MaxScores, HighScores.Count);
             // A should remain the highest score in the list.
             Assert.AreEqual("a", HighScores[0].Name);
-            // D should be added before A.
-            Assert.AreEqual("d", HighScores[2].Name);
+            // D should be added after A.
+            Assert.AreEqual("d", HighScores[1].Name);
             // B should be moved to the last position, pushing C off the list.
-            Assert.AreEqual("b", HighScores[1].Name);
+            Assert.AreEqual("b", HighScores[2].Name);
         }
 
         [TestMethod]
