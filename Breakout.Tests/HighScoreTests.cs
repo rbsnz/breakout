@@ -39,21 +39,24 @@ namespace Breakout.Tests
         private void PopulateScores()
         {
             // Adding the first 3 high scores should succeed.
-            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 300, "a")));
-            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 200, "b")));
-            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 100, "c")));
+            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 300, "A")));
+            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 200, "B")));
+            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 100, "C")));
         }
 
         [TestMethod]
         public void TestIsHighScore()
         {
+            Assert.IsFalse(HighScores.IsHighScore(0), "0 should not qualify as a high score, even if the score list is not full.");
+
             PopulateScores();
 
-            Assert.IsTrue(HighScores.IsHighScore(400));
-            Assert.IsTrue(HighScores.IsHighScore(300));
-            Assert.IsTrue(HighScores.IsHighScore(200));
-            Assert.IsFalse(HighScores.IsHighScore(100));
-            Assert.IsFalse(HighScores.IsHighScore(50));
+            Assert.IsFalse(HighScores.IsHighScore(50), "A score smaller than the lowest score should not qualify as a high score.");
+            Assert.IsFalse(HighScores.IsHighScore(100), "A score the same as the lowest score should not qualify as a high score.");
+            Assert.IsTrue(HighScores.IsHighScore(101), "Any number larger than the lowest score should qualify as a high score.");
+            Assert.IsTrue(HighScores.IsHighScore(300), "Any number larger than the lowest score should qualify as a high score.");
+            Assert.IsTrue(HighScores.IsHighScore(200), "Any number larger than the lowest score should qualify as a high score.");
+            Assert.IsTrue(HighScores.IsHighScore(400), "Any number larger than the lowest score should qualify as a high score.");
         }
 
         [TestMethod]
@@ -61,14 +64,10 @@ namespace Breakout.Tests
         {
             PopulateScores();
 
-            // The high score list should be full.
-            Assert.AreEqual(HighScores.MaxScores, HighScores.Count);
-            // The score should be added as it qualifies as a high score.
-            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 500, "d")));
-            // The the size of the high score list should remain the same.
-            Assert.AreEqual(HighScores.MaxScores, HighScores.Count);
-            // The lowest score should be removed.
-            Assert.IsFalse(HighScores.Any(x => x.Score == 100));
+            Assert.AreEqual(HighScores.MaxScores, HighScores.Count, "The high score list should be full.");
+            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate, 500, "d")), "The score should be added as it qualifies as a high score.");
+            Assert.AreEqual(HighScores.MaxScores, HighScores.Count, "The the size of the high score list should remain the same.");
+            Assert.IsFalse(HighScores.Any(x => x.Score == 100), "The lowest score should be removed.");
         }
 
         /// <summary>
@@ -80,9 +79,7 @@ namespace Breakout.Tests
         {
             PopulateScores();
 
-            // Attempting to add a score less than the lowest score
-            // when the high score list is full should not succeed.
-            Assert.IsFalse(HighScores.Add(new HighScore(50, "d")));
+            Assert.IsFalse(HighScores.Add(new HighScore(50, "d")), "A score smaller than the lowest should not be added as a high score.");
         }
 
         /// <summary>
@@ -94,15 +91,12 @@ namespace Breakout.Tests
         {
             PopulateScores();
 
-            // Attempting to add a score equal to the lowest score
-            // when the high score list is full should not succeed.
-            Assert.IsFalse(HighScores.Add(new HighScore(100, "d")));
+            Assert.IsFalse(HighScores.Add(new HighScore(100, "d")), "A score equal to the lowest should not be added as a high score.");
 
-            // The list should not be changed.
-            Assert.AreEqual(HighScores.MaxScores, HighScores.Count);
-            Assert.AreEqual("a", HighScores[0].Name);
-            Assert.AreEqual("b", HighScores[1].Name);
-            Assert.AreEqual("c", HighScores[2].Name);
+            Assert.AreEqual(HighScores.MaxScores, HighScores.Count, "The list should not be changed.");
+            Assert.AreEqual("A", HighScores[0].Name, "The list should not be changed.");
+            Assert.AreEqual("B", HighScores[1].Name, "The list should not be changed.");
+            Assert.AreEqual("C", HighScores[2].Name, "The list should not be changed.");
         }
 
         [TestMethod]
@@ -110,16 +104,12 @@ namespace Breakout.Tests
         {
             PopulateScores();
 
-            // Adding a score with the same value as B should succeed.
-            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate.AddMinutes(5), 200, "d")));
-            // The list length should not be changed.
-            Assert.AreEqual(HighScores.MaxScores, HighScores.Count);
-            // A should remain the highest score in the list.
-            Assert.AreEqual("a", HighScores[0].Name);
-            // B should not change position as it was added at an earlier date.
-            Assert.AreEqual("b", HighScores[1].Name);
-            // D should be added to the last position in the list, replacing C.
-            Assert.AreEqual("d", HighScores[2].Name);
+            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate.AddMinutes(5), 200, "D")), "Adding a score with the same value as B should succeed.");
+            Assert.AreEqual(HighScores.MaxScores, HighScores.Count, "The list length should not be changed.");
+            Assert.AreEqual("A", HighScores[0].Name, "A should remain the highest score in the list.");
+            Assert.AreEqual("B", HighScores[1].Name, "B should not change position since it was added at an earlier date.");
+            Assert.AreEqual("D", HighScores[2].Name, "D should be added to the last position in the list, replacing C.");
+            Assert.IsFalse(HighScores.Any(x => x.Name.Equals("C")), "C should no longer exist in the high score list.");
         }
 
         [TestMethod]
@@ -127,16 +117,25 @@ namespace Breakout.Tests
         {
             PopulateScores();
 
-            // Adding a score with the same value as A should succeed.
-            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate.AddMinutes(5), 300, "d")));
-            // The list length should not be changed.
-            Assert.AreEqual(HighScores.MaxScores, HighScores.Count);
-            // A should remain the highest score in the list.
-            Assert.AreEqual("a", HighScores[0].Name);
-            // D should be added after A.
-            Assert.AreEqual("d", HighScores[1].Name);
-            // B should be moved to the last position, pushing C off the list.
-            Assert.AreEqual("b", HighScores[2].Name);
+            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate.AddMinutes(5), 300, "D")), "Adding a score with the same value as A should succeed.");
+            Assert.AreEqual(HighScores.MaxScores, HighScores.Count, "The list length should not be changed.");
+            Assert.AreEqual("A", HighScores[0].Name, "A should remain the highest score in the list since it was added at an earlier date.");
+            Assert.AreEqual("D", HighScores[1].Name, "D should be inserted after A.");
+            Assert.AreEqual("B", HighScores[2].Name, "B should be moved to the last position, pushing C off the list.");
+            Assert.IsFalse(HighScores.Any(x => x.Name.Equals("C")), "C should no longer exist in the high score list.");
+        }
+
+        [TestMethod]
+        public void TestAddSameScore_Highest()
+        {
+            PopulateScores();
+
+            Assert.IsTrue(HighScores.Add(new HighScore(OriginDate.AddMinutes(5), 400, "D")), "Adding a new highest score should succeed.");
+            Assert.AreEqual(HighScores.MaxScores, HighScores.Count, "The list length should not be changed.");
+            Assert.AreEqual("D", HighScores[0].Name, "D should be the new highest score in the list.");
+            Assert.AreEqual("A", HighScores[1].Name, "A should be pushed down to position 2.");
+            Assert.AreEqual("B", HighScores[2].Name, "B should be pushed down to the last position.");
+            Assert.IsFalse(HighScores.Any(x => x.Name.Equals("C")), "C should no longer exist in the high score list.");
         }
 
         [TestMethod]
@@ -148,8 +147,7 @@ namespace Breakout.Tests
                 low = new HighScore(dt, 50, "x"),
                 high = new HighScore(dt, 1000, "x");
 
-            // High scores should take precedence over low scores.
-            Assert.AreEqual(-1, high.CompareTo(low));
+            Assert.AreEqual(-1, high.CompareTo(low), "High scores should take precedence over low scores.");
         }
 
         [TestMethod]
@@ -159,8 +157,7 @@ namespace Breakout.Tests
                 past = new HighScore(DateTime.Now.AddMinutes(-10), 100, "x"),
                 future = new HighScore(DateTime.Now.AddMinutes(10), 100, "x");
 
-            // Past dates should take precedence over future dates.
-            Assert.AreEqual(-1, past.CompareTo(future));
+            Assert.AreEqual(-1, past.CompareTo(future), "Past dates should take precedence over future dates.");
         }
 
         [TestMethod]
@@ -173,9 +170,7 @@ namespace Breakout.Tests
                 now = new HighScore(dt, 100, "x"),
                 utcNow = new HighScore(dtUtc, 100, "x");
 
-            // DateTime should be converted to universal time when compared,
-            // so these scores should be equal.
-            Assert.AreEqual(0, now.CompareTo(utcNow));
+            Assert.AreEqual(0, now.CompareTo(utcNow), "DateTime should be converted to universal time when compared, so these scores should be equal.");
         }
     }
 }

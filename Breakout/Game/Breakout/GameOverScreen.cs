@@ -21,7 +21,6 @@ namespace Breakout.Game
 
         private string _name = "";
 
-
         public GameOverScreen(GameManager manager, int score)
             : base(manager)
         {
