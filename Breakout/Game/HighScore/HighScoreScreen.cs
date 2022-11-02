@@ -39,7 +39,7 @@ namespace Breakout.Game
                 Alignment = ContentAlignment.TopCenter
             };
 
-            _backButton = new Button(Manager, _textFont, "Back");
+            _backButton = new Button(Manager, _titleFont, "Back");
             _backButton.Position = new Vector2(
                 Ui.ClientSize.Width / 2 - _backButton.Size.Width / 2,
                 Ui.ClientSize.Height - 20 - _backButton.Size.Height
