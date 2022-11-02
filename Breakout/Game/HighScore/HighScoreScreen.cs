@@ -1,8 +1,4 @@
-﻿
-using Breakout.Data;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using System.Numerics;
 
@@ -18,12 +14,19 @@ namespace Breakout.Game
 
         private bool _transitioning;
 
-        private readonly Text _scoreText;
+        private readonly Text _titleText, _scoreText;
 
         public HighScoreScreen(GameManager manager)
             : base(manager)
         {
             _titleFont = Font.GetFont(Theme.FontFamily, 20.0f);
+            _titleText = new Text(Manager, _titleFont)
+            {
+                Value = $"TOP {HighScores.MaxScores}\nHIGH SCORES",
+                Color = Color.Yellow,
+                Position = new Vector2(Ui.ClientSize.Width / 2, 20),
+                Alignment = ContentAlignment.TopCenter
+            };
 
             _textFont = Font.GetFont(Theme.FontFamily, 16.0f);
 
@@ -110,10 +113,8 @@ namespace Breakout.Game
 
         protected override void OnDraw(Graphics g)
         {
-            g.DrawStringAligned("HIGH SCORES", _titleFont, Brushes.Yellow, new PointF(Ui.ClientSize.Width / 2, 20), ContentAlignment.TopCenter);
-
+            _titleText.Draw(g);
             _scoreText.Draw(g);
-
             _backButton.Draw(g);
         }
     }

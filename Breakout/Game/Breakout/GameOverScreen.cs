@@ -18,6 +18,8 @@ namespace Breakout.Game
 
         private string _name = "";
 
+        private bool _isHighScore;
+
         public GameOverScreen(GameManager manager, int score)
             : base(manager)
         {
@@ -25,14 +27,16 @@ namespace Breakout.Game
             _dimmer = new Dimmer();
             _score = score;
 
+            _isHighScore = manager.HighScores.IsHighScore(_score);
+
             string gameOverString = "GAME OVER!";
-            if (manager.HighScores.IsHighScore(score))
+            if (_isHighScore)
             {
-                gameOverString += "\nYou got a high score.\nEnter your name:\n";
+                gameOverString += "\n\nYou got a high score.\nEnter your name:\n";
             }
             else
             {
-                gameOverString += "\nUnforunately you didn't make the high score list.\nPress any key to continue.";
+                gameOverString += "\n\nUnforunately you didn't make\nthe high score list.\n\nPress any key to continue.";
             }
 
             _gameOverText = new Text(Manager, _font)
@@ -57,6 +61,18 @@ namespace Breakout.Game
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (_transitioning) return;
+
+            if (!_isHighScore)
+            {
+                _transitioning = true;
+                AddFadeOut(() =>
+                {
+                    RemoveScreen<BreakoutScreen>();
+                    RemoveScreen(this);
+                    AddScreen<HighScoreScreen>();
+                });
+                return;
+            }
 
             if ((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z) ||
                 (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9))
