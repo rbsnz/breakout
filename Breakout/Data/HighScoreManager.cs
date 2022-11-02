@@ -1,15 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Breakout.Data
 {
     /// <summary>
     /// Manages the high score database.
     /// </summary>
-    public class HighScoreManager
+    public class HighScoreManager : IReadOnlyList<HighScore>
     {
         private readonly string _scoreFilePath;
+
+        private readonly List<HighScore> _scores = new List<HighScore>();
+
+        public int Count => _scores.Count;
+        public HighScore this[int index] => _scores[index];
 
         /// <summary>
         /// Constructs a new high score manager.
@@ -17,14 +24,28 @@ namespace Breakout.Data
         public HighScoreManager()
         {
             _scoreFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "breakout.scores");
+
+            Load();
         }
+
+        private void SortScores()
+        {
+            _scores.Sort((a, b) => b.Score - a.Score);
+            if (_scores.Count > 5)
+                _scores.RemoveRange(5, _scores.Count - 5);
+        }
+
+        /// <summary>
+        /// Gets if the specified score qualifies as a high score.
+        /// </summary>
+        public bool IsHighScore(int value) => (_scores.Count == 0) || (value > _scores.Min(x => x.Score));
 
         /// <summary>
         /// Loads the high scores.
         /// </summary>
-        public List<HighScore> Load()
+        private void Load()
         {
-            var scores = new List<HighScore>();
+            _scores.Clear();
 
             if (File.Exists(_scoreFilePath))
             {
@@ -32,43 +53,58 @@ namespace Breakout.Data
                 using (BinaryReader reader = new BinaryReader(fileStream))
                 {
                     int count = reader.ReadByte();
-
-                    while (fileStream.Position < fileStream.Length)
+                    for (int i = 0; i < count; i++)
                     {
-                        string name = reader.ReadString();
                         int score = reader.ReadInt32();
-                        scores.Add(new HighScore(name, score));
+                        string name = reader.ReadString();
+                        _scores.Add(new HighScore(name, score));
                     }
                 }
             }
 
-            scores.Sort((a, b) => b.Score - a.Score);
-            return scores;
+            SortScores();
         }
 
         /// <summary>
         /// Saves the top 10 high scores from the specified list.
         /// </summary>
-        public void Save(List<HighScore> highScores)
+        private void Save()
         {
-            highScores.Sort((a, b) => b.Score - a.Score);
-
-            if (highScores.Count > 10)
-            {
-                highScores.RemoveRange(10, highScores.Count - 10);
-            }
+            SortScores();
 
             using (Stream fileStream = File.OpenWrite(_scoreFilePath))
             using (BinaryWriter writer = new BinaryWriter(fileStream))
             {
-                writer.Write((ushort)highScores.Count);
-
-                foreach (var highScore in highScores)
+                writer.Write((byte)_scores.Count);
+                foreach (var highScore in _scores)
                 {
                     writer.Write(highScore.Score);
                     writer.Write(highScore.Name);
                 }
             }
         }
+
+        /// <summary>
+        /// Adds the specified high score.
+        /// </summary>
+        public void Add(HighScore highScore)
+        {
+            _scores.Add(highScore);
+            SortScores();
+            Save();
+        }
+
+        /// <summary>
+        /// Resets all scores.
+        /// </summary>
+        public void Reset()
+        {
+            _scores.Clear();
+
+            try { File.Delete(_scoreFilePath); } catch { }
+        }
+
+        public IEnumerator<HighScore> GetEnumerator() => _scores.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

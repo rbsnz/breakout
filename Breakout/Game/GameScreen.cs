@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-
+using Breakout.Data;
 using Breakout.Fonts;
 using Breakout.Services;
 
@@ -22,6 +22,7 @@ namespace Breakout.Game
         public IUiManager Ui => Manager.Ui;
         public FontManager Font => Manager.Font;
         public ISoundManager Sound => Manager.Sound;
+        public HighScoreManager HighScores => Manager.HighScores;
 
         protected void AddScreen(GameScreen screen) => Manager.AddScreen(screen);
         protected void AddScreen<T>(Action<T> configure = null) where T : GameScreen => Manager.AddScreen<T>();

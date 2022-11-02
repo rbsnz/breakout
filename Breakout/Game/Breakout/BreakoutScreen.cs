@@ -118,7 +118,7 @@ namespace Breakout.Game
         protected override void OnRemove()
         {
             Ui.Deactivate -= OnUiDeactivated;
-            Manager.RemoveScreen(_pauseScreen);
+            RemoveScreen(_pauseScreen);
         }
 
         #region Input
@@ -410,7 +410,7 @@ namespace Breakout.Game
                 {
                     _alive = false;
                     ReleaseMouse();
-                    AddScreen<GameOverScreen>();
+                    AddScreen(new GameOverScreen(Manager, _scoreOverlay.Value));
                 }
             }
 
