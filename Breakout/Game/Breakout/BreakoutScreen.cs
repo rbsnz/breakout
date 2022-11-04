@@ -459,12 +459,6 @@ namespace Breakout.Game
             {
                 _bricks.Remove(brick);
                 additionalScore += 5;
-
-                if (_bricks.Count == 0)
-                {
-                    // End the game if there are no more bricks.
-                    EndGame();
-                }
             }
 
             // Add extra points for the combo counter.
@@ -478,6 +472,12 @@ namespace Breakout.Game
                 $"{additionalScore}",
                 Theme.FirmnessColors[brick.Firmness + 1]
             ));
+
+            if (_bricks.Count == 0)
+            {
+                // End the game if there are no more bricks.
+                EndGame();
+            }
         }
 
         protected override void OnUpdate()
